@@ -1,0 +1,202 @@
+#header {
+    padding: 10px;
+    background-color: #182820;
+    background: linear-gradient(#344, #233A32);
+    border-radius: 5px 5px 0px 0px;
+    border-top: 1px solid #AAA;
+    color: white;
+}
+
+#header h1 {
+    text-shadow: 0px 1px 2px black;
+}
+
+#content {
+    padding: 10px;
+}
+
+#navigation {
+    font-family: monospace;
+}
+
+a { color: #00a }
+a:visited { color: #00a }
+
+#navigation a {
+    position: relative;
+    top: -2px;
+    font-size: 10pt;
+    text-decoration: none;
+    background-color: #eee;
+    padding: 5px 14px;
+    font-size: 8pt;
+    text-shadow: 0px 1px white;
+    color: black;
+    box-shadow: 0px 2px 2px black;
+    border-bottom: 2px solid grey;
+    border-radius: 2px;
+    display: inline-block;
+    background: linear-gradient(#fff, #ddd);
+    border-bottom: 2px solid white;
+}
+
+#navigation a:hover {
+    background: linear-gradient(#fafafa, #ccc);
+}
+
+#navigation a:active {
+    background: linear-gradient(#eee, #bbb);
+    position: relative;
+    top: -1px;
+}
+
+#navigation a.rss {
+    float: right;
+    color: transparent;
+    text-shadow: none;
+    background: center/contain url("/images/rss.svg") no-repeat,
+                linear-gradient(#fff, #ddd);
+}
+
+#navigation a.rss:hover {
+    background: center/contain url("/images/rss.svg") no-repeat,
+                linear-gradient(#fafafa, #ccc);
+}
+
+#navigation a.rss:active {
+    background: center/contain url("/images/rss.svg") no-repeat,
+                linear-gradient(#eee, #bbb);
+}
+
+body {
+    background-color: #222;
+    font-family: "Helvetica", sans-serif;
+    font-weight: lighter;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:active, a:hover {
+    text-decoration: underline;
+}
+
+#main {
+    border-radius: 7px 7px 3px 3px;
+    box-shadow: 0px 0px 10px black;
+    background-color: white;
+    max-width: 811px; /* should fit exactly 6 thumbnails */
+    margin: auto;
+    word-wrap: break-word;
+}
+
+img {
+    max-width: 100%;
+}
+
+code {
+    font-size: small;
+}
+
+.thumb {
+    text-decoration: none;
+    position: relative;
+    width: 128px;
+    height: 128px;
+    display: inline-block;
+    border-radius: 3px;
+    /* font stuff here because (the editorial) we change it in .thumb:visited */
+    font-family: monospace;
+    font-size: small;
+    text-align: center;
+    color: white;
+}
+
+#image img {
+    display: block;
+    margin: auto;
+    padding-bottom: 60px;
+    max-width: 100%;
+}
+
+.thumb:visited {
+    color: white;
+}
+
+.thumbimg {
+    border-radius: 3px;
+}
+
+.thumb .caption {
+    position: absolute;
+    bottom: 0; left: 0;
+    background-color: black;
+    border-bottom-left-radius: 3px;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+/* Syntax highlighting */
+/* I wish I remembered where I got this */
+
+code.sourceCode span.kw {
+    color: #007020;
+    font-weight: bold
+}
+
+code.sourceCode span.dt {
+    color: #902000
+}
+
+code.sourceCode span.dv {
+    color: #40a070
+}
+
+code.sourceCode span.bn {
+    color: #40a070
+}
+
+code.sourceCode span.fl {
+    color: #40a070
+}
+
+code.sourceCode span.ch {
+    color: #4070a0
+}
+
+code.sourceCode span.st {
+    color: #4070a0
+}
+
+code.sourceCode span.co {
+    color: #60a0b0;
+    font-style: italic
+}
+
+code.sourceCode span.ot {
+    color: #007020
+}
+
+code.sourceCode span.al {
+    color: red;
+    font-weight: bold
+}
+
+code.sourceCode span.fu {
+    color: #06287e
+}
+
+code.sourceCode span.re {}
+
+code.sourceCode span.er {
+    color: red;
+    font-weight: bold
+}
+
+.info {
+    font-style: italic;
+    font-size: smaller;
+    float: right;
+    line-height: 10px;
+}
