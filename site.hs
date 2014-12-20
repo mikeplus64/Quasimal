@@ -14,7 +14,7 @@ main = hakyll $ do
     route   idRoute
     compile compressCssCompiler
 
-  match (fromList ["about.md"]) $ do
+  match (fromList ["resume.md"]) $ do
     route   $ setExtension "html"
     compile $ pandocCompiler
       >>= loadAndApplyTemplate "templates/default.html" defaultContext
@@ -129,9 +129,13 @@ main = hakyll $ do
 galleryCtx :: Context String
 galleryCtx = postCtx <> galleryVersion "raw" <> galleryVersion "thumb"
 
-galleryVersion :: String -> Context a
-galleryVersion v = field v $ \item ->
-  return . setExt . replacer . toFilePath $! itemIdentifier item
+galleryVersion :: String -> Context String
+galleryVersion v =
+  field v (return . setExt . replacer . toFilePath . itemIdentifier)
+  <> field "description" (\item -> do
+    meta <- getMetadataField (itemIdentifier item) "description"
+    return (maybe "" id meta))
+
  where
   setExt exp =
     if v == "thumb"
