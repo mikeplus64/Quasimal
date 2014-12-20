@@ -2,10 +2,21 @@
 import Data.List
 import Data.Monoid
 import Hakyll
+import System.Environment
 import Text.Regex
 
+cfg = defaultConfiguration
+  { destinationDirectory = "/var/www"
+  }
+
+hakyll' f = do
+  args <- getArgs
+  case args of
+    [dest] -> hakyllWith defaultConfiguration{destinationDirectory = dest} f
+    _      -> hakyll f
+
 main :: IO ()
-main = hakyll $ do
+main = hakyll' $ do
   match "images/**" $ do
     route   idRoute
     compile copyFileCompiler
