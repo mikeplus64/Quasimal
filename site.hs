@@ -5,15 +5,11 @@ import Hakyll
 import System.Environment
 import Text.Regex
 
-cfg = defaultConfiguration
-  { destinationDirectory = "/var/www"
-  }
-
 hakyll' f = do
-  args <- getArgs
-  case args of
-    [dest] -> hakyllWith defaultConfiguration{destinationDirectory = dest} f
-    _      -> hakyll f
+  dest <- getLine
+  if null dest
+    then hakyll f
+    else hakyllWith defaultConfiguration{destinationDirectory = dest} f
 
 main :: IO ()
 main = hakyll' $ do
