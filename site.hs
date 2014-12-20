@@ -5,14 +5,8 @@ import Hakyll
 import System.Environment
 import Text.Regex
 
-hakyll' f = do
-  dest <- getLine
-  if null dest
-    then hakyll f
-    else hakyllWith defaultConfiguration{destinationDirectory = dest} f
-
 main :: IO ()
-main = hakyll' $ do
+main = hakyll $ do
   match "images/**" $ do
     route   idRoute
     compile copyFileCompiler
