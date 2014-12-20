@@ -33,6 +33,7 @@ main = hakyll $ do
     route $ setExtension "html"
     compile $ pandocCompiler
       >>= loadAndApplyTemplate "templates/project.html" defaultContext
+      >>= saveSnapshot "proj-content"
       >>= loadAndApplyTemplate "templates/default.html" defaultContext
       >>= relativizeUrls
 
@@ -65,7 +66,7 @@ main = hakyll $ do
     route idRoute
     compile $ do
       posts <- recentFirst =<< loadAll "posts/*.md"
-      projs <- loadAll "projects/*.md"
+      projs <- recentFirst =<< loadAll "projects/*.md"
       let indexCtx = mconcat
             [ listField "posts"    postCtx        (return posts)
             , listField "projects" defaultContext (return projs)
@@ -81,8 +82,10 @@ main = hakyll $ do
     route idRoute
     compile $ do
       let feedCtx = postCtx `mappend` bodyField "description"
-      posts <- recentFirst =<< loadAllSnapshots "posts/*.md" "post-content"
-      renderRss feedCfg feedCtx posts
+      projs <- loadAllSnapshots "projects/*.md" "proj-content"
+      posts <- loadAllSnapshots "posts/*.md" "post-content"
+      both  <- recentFirst (projs ++ posts)
+      renderRss feedCfg feedCtx both
 
   create ["posts/index.html"] $ do
     route idRoute
@@ -114,7 +117,7 @@ main = hakyll $ do
   create ["projects/index.html"] $ do
     route idRoute
     compile $ do
-      posts <- loadAll "projects/*.md"
+      posts <- recentFirst =<< loadAll "projects/*.md"
       let ctx = mconcat [listField "projects" defaultContext (return posts)
                         ,constField "title" "Projects"
                         ,defaultContext
@@ -161,5 +164,5 @@ feedCfg = FeedConfiguration
   , feedDescription = "There are no musings here."
   , feedAuthorName  = "Mike Ledger"
   , feedAuthorEmail = "mike@quasimal.com"
-  , feedRoot        = "http://quasimal.com/posts"
+  , feedRoot        = "http://quasimal.com/"
   }
