@@ -1,5 +1,6 @@
 ---
 title: Hotswap
+published: 2012-03-03
 ---
 [GitHub project](https://github.com/mikeplus64/hotswap).
 

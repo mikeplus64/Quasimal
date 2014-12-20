@@ -1,5 +1,6 @@
 ---
 title: Greg
+published: 2012-04-12
 ---
 
 [GitHub project](https://github.com/mikeplus64/Greg)
