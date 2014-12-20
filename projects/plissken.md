@@ -11,7 +11,7 @@ started two projects [^1][^2] that I hope to eventually replace hmatrix here wit
 along with `GLFW-b`, `FTGL` and `OpenGLRaw` (among others).
 
 Plissken notably includes a .obj loader, a novel method of registering shaders
-and the uniforms they require in a type-safe way.
+and the uniforms they require in a type-safe way, and a level editor.
 
 [GitHub project](https://github.com/mikeplus64/plissken)
 
