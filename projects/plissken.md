@@ -14,3 +14,6 @@ Plissken notably includes a .obj loader, a novel method of registering shaders
 and the uniforms they require in a type-safe way.
 
 [GitHub project](https://github.com/mikeplus64/plissken)
+
+- [1]: [GitHub project](https://github.com/mikeplus64/indices)
+- [2]: [GitHub project](https://github.com/mikeplus64/static)
