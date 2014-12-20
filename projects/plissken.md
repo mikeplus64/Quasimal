@@ -15,5 +15,5 @@ and the uniforms they require in a type-safe way.
 
 [GitHub project](https://github.com/mikeplus64/plissken)
 
-- [^1]: [indices](https://github.com/mikeplus64/indices)
-- [^2]: [static](https://github.com/mikeplus64/static)
+[^1]: [indices](https://github.com/mikeplus64/indices)
+[^2]: [static](https://github.com/mikeplus64/static)
