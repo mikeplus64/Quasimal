@@ -164,5 +164,5 @@ feedCfg = FeedConfiguration
   , feedDescription = "There are no musings here."
   , feedAuthorName  = "Mike Ledger"
   , feedAuthorEmail = "mike@quasimal.com"
-  , feedRoot        = "http://quasimal.com/"
+  , feedRoot        = "http://quasimal.com"
   }
