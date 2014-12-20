@@ -44,13 +44,13 @@ main = hakyll $ do
             `composeRoutes` setExtension "jpg")
       compile $ do
         path <- getResourceFilePath
-        makeItem =<< unixFilterLBS "mkthumb" [path, "128x128"] mempty
+        makeItem =<< unixFilterLBS "bin/mkthumb" [path, "128x128"] mempty
     version "thumb@2x" $ do
       route (gsubRoute "gallery/" (const "gallery/thumb/")
             `composeRoutes` setExtension "jpg@2x")
       compile $ do
         path <- getResourceFilePath
-        makeItem =<< unixFilterLBS "mkthumb" [path, "256x256"] mempty
+        makeItem =<< unixFilterLBS "bin/mkthumb" [path, "256x256"] mempty
     version "html" $ do
       route (setExtension "html")
       compile $ getResourceFilePath
