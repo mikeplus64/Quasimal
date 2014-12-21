@@ -13,10 +13,7 @@
 
 #content {
     padding: 10px;
-}
-
-#navigation {
-    font-family: monospace;
+    line-height: 1.3em;
 }
 
 a { color: #00a }
