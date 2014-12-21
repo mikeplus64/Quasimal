@@ -1,7 +1,7 @@
 #header {
     padding: 15px;
-    background-color: #182820;
     background: linear-gradient(#344, #233A32);
+    background-color: #182820;
     border-radius: 5px 5px 0px 0px;
     border-top: 1px solid #AAA;
     color: white;
@@ -37,15 +37,18 @@ a:visited { color: #256 }
     border-radius: 2px;
     display: inline-block;
     background: linear-gradient(#fff, #ddd);
+    background-color: #ddd;
     border-bottom: 2px solid white;
 }
 
 #navigation a:hover {
     background: linear-gradient(#fafafa, #ccc);
+    background-color: #ccc;
 }
 
 #navigation a:active {
     background: linear-gradient(#eee, #bbb);
+    background-color: #bbb;
     position: relative;
     top: -1px;
 }
