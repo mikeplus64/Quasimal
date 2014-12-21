@@ -20,7 +20,7 @@ a {
     color: #256;
     font-weight: normal;
 }
-a:visited { color: #376 }
+a:visited { color: #256 }
 
 #navigation a {
     position: relative;
