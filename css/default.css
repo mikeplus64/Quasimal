@@ -1,5 +1,5 @@
 #header {
-    padding: 20px;
+    padding: 15px;
     background-color: #182820;
     background: linear-gradient(#344, #233A32);
     border-radius: 5px 5px 0px 0px;
@@ -16,8 +16,11 @@
     line-height: 1.3em;
 }
 
-a { color: #00a }
-a:visited { color: #00a }
+a {
+    color: #256;
+    font-weight: normal;
+}
+a:visited { color: #376 }
 
 #navigation a {
     position: relative;
