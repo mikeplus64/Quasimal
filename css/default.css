@@ -98,9 +98,6 @@ img {
     max-width: 100%;
 }
 
-code {
-    font-size: small;
-}
 
 .thumb {
     text-decoration: none;
@@ -141,6 +138,14 @@ code {
 
 /* Syntax highlighting */
 /* I wish I remembered where I got this */
+
+code {
+    font-size: 11pt;
+}
+
+code.sourceCode {
+    font-size: small;
+}
 
 code.sourceCode span.kw {
     color: #007020;
