@@ -1,37 +1,19 @@
 ---
 title: Mike Ledger
-author: Mike Ledger
-date: 22 December, 2014
-description: My resume
+geometry: margin=1in
 ---
 
-<div id="header">
-<div id="navigation">
-  <a href="/">Home</a>
-  <a href="/posts">Posts</a>
-  <a href="/projects">Projects</a>
-  <a href="/gallery">Gallery</a>
-  <a class="rss" href="/feed.xml">-</a>
-  <a href="/resume.html">Resume</a>
-</div>
-<div id="details">
+*An online version of this resume is available at <http://quasimal.com/resume.html>.*
 
 +-----------------+----------------------+
 | Email           | <mike@quasimal.com>  | 
 +-----------------+----------------------+
 | Website         | [quasimal.com](http://quasimal.com) |
 +-----------------+----------------------+
-| Phone           | <a href="tel://+61403154462">+61 403 154 462</a>  |
+| Phone           | \href{tel:61403154462}{+61 403 154 462} |
 +-----------------+----------------------+
 | Elsewhere online| [GitHub](https://github.com/mikeplus64), [Hackage](http://hackage.haskell.org/user/MikeLedger)
 +-----------------+----------------------+
-
-<img id="gravatar" alt="Gravatar" src="https://secure.gravatar.com/avatar/c9f4d28a5240e2b99d83a5848f49c01f?s=200" title="Gravatar (Wallace and Gromit: A Grand Day Out)" />
-<div style="clear: both"></div>
-</div>
-</div>
-
-<div id="content">
 
 I'm a programmer and occasional artist living in Canberra, Australia. I'm
 passionate about all things Haskell and solving real-world problems with
@@ -39,8 +21,6 @@ computer science. I'm 1 year into studying towards a Bachelor of Advanced
 Computing at the ANU.
 
 ## Skills
-
-<div id="skills">
 
 +---------------+---------------+---------------+---------------+
 | Haskell       | SQL           | C             | C++           |
@@ -51,8 +31,6 @@ Computing at the ANU.
 +---------------+---------------+---------------+---------------+
 | Modelling     | Texturing     | Drawing       | ... and more  |
 +---------------+---------------+---------------+---------------+
-
-</div>
 
 ## Original work
 
@@ -90,11 +68,11 @@ statically bounded arrays, unrolling operations at compile-time where possible.
 - Heist support
 - Hackage maintainership
 
-[lens](http://hackage.haskell.org/package/lens
+[lens](http://hackage.haskell.org/package/lens)
 
 - Initial `makeFields` implementation.
 
-[hmatrix](http://hackage.haskell.org/package/hmatrix
+[hmatrix](http://hackage.haskell.org/package/hmatrix)
 
 - FFI helpers
 
@@ -110,10 +88,6 @@ statically bounded arrays, unrolling operations at compile-time where possible.
 2014 - 2018 (expected): 
 *Bachelor of Advanced Computing*
 
-#### 2014 grades
-
-<div id="grades">
-
 Course |  | Grade
 -----|-----|-----:
 **`COMP1130`** | *Introduction to Programming and Algorithms (Advanced)* | HD
@@ -125,12 +99,9 @@ Course |  | Grade
 **`MATH1014`** | *Mathematics and Applications 2* | CR
 **`STAT1003`** | *Statistical Techniques* | P
 
-</div>
-
 ### Turramurra High School
 Graduated 2013 with an ATAR of 85.90.
 
-</div>
-
 ## References
-References available on request.
+Available on request.
+
