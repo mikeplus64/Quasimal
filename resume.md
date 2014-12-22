@@ -130,7 +130,7 @@ Course |  | Grade
 ### Turramurra High School
 Graduated 2013 with an ATAR of 85.90.
 
-</div>
-
 ## References
 References available on request.
+</div>
+
