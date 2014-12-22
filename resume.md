@@ -23,7 +23,7 @@ description: My resume
 +-----------------+----------------------+
 | Phone           | <a href="tel://+61403154462">+61 403 154 462</a>  |
 +-----------------+----------------------+
-| Elsewhere online| [GitHub](https://github.com/mikeplus64), [Hackage](http://hackage.haskell.org/user/MikeLedger), Freenode: `mikeplus64`
+| Elsewhere online| [GitHub](https://github.com/mikeplus64), [Hackage](http://hackage.haskell.org/user/MikeLedger)
 +-----------------+----------------------+
 
 <img id="gravatar" alt="Gravatar" src="https://secure.gravatar.com/avatar/c9f4d28a5240e2b99d83a5848f49c01f?s=200" title="Gravatar (Wallace and Gromit: A Grand Day Out)" />
@@ -131,3 +131,6 @@ Course |  | Grade
 Graduated 2013 with an ATAR of 85.90.
 
 </div>
+
+## References
+References available on request.
