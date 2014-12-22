@@ -18,6 +18,10 @@
     clear: both;
 }
 
+#header p {
+    display: inline;
+}
+
 #gravatar {
     position: absolute;
     top: 0;
