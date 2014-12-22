@@ -18,8 +18,7 @@ main = hakyll $ do
   match (fromList ["resume.md"]) $ do
     route   $ setExtension "html"
     compile $ pandocCompiler
-      >>= loadAndApplyTemplate "templates/default.html" defaultContext
-      >>= relativizeUrls
+      >>= loadAndApplyTemplate "templates/resume.html" defaultContext
 
   match "posts/*.md" $ do
     route $ setExtension "html"
