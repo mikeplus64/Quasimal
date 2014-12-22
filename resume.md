@@ -90,11 +90,11 @@ statically bounded arrays, unrolling operations at compile-time where possible.
 - Heist support
 - Hackage maintainership
 
-[lens](http://hackage.haskell.org/package/lens
+[lens](http://hackage.haskell.org/package/lens)
 
 - Initial `makeFields` implementation.
 
-[hmatrix](http://hackage.haskell.org/package/hmatrix
+[hmatrix](http://hackage.haskell.org/package/hmatrix)
 
 - FFI helpers
 
