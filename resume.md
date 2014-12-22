@@ -6,7 +6,6 @@ description: My resume
 ---
 
 <div id="header">
-
 <div id="navigation">
   <a href="/">Home</a>
   <a href="/posts">Posts</a>
@@ -15,7 +14,6 @@ description: My resume
   <a class="rss" href="/feed.xml">-</a>
   <a href="/resume.html">Resume</a>
 </div>
-
 
 +-----------------+----------------------+
 | Email           | <mike@quasimal.com>  | 
@@ -28,14 +26,12 @@ description: My resume
 +-----------------+----------------------+
 
 <img id="gravatar" alt="Gravatar" src="https://secure.gravatar.com/avatar/c9f4d28a5240e2b99d83a5848f49c01f?s=200" title="Gravatar (Wallace and Gromit: A Grand Day Out)" />
-
 <div style="clear: both"></div>
-
 </div>
 
 <div id="content">
 
-I'm a programmer and occassional artist living in Canberra, Australia. I'm
+I'm a programmer and occasional artist living in Canberra, Australia. I'm
 passionate about all things Haskell and solving real-world problems with
 computer science. I'm 1 year into studying towards a Bachelor of Advanced
 Computing at the ANU.
@@ -58,7 +54,7 @@ Computing at the ANU.
 
 ## Original work
 
-### Complete/released
+### Completed or released
 
 [indices](http://hackage.haskell.com/package/indices), a library providing
 statically bounded array indices, extensively making use of GHC features to
@@ -86,8 +82,6 @@ statically bounded arrays, unrolling operations at compile-time where possible.
 
 ## Open source contributions
 
-### Hackage
-
 `snaplet-recaptcha` 
 
 - Updated for new ReCAPTCHA API
@@ -102,21 +96,19 @@ statically bounded arrays, unrolling operations at compile-time where possible.
 
 - FFI helpers
 
-### Other
-
 [Red Eclipse](http://redeclipse.net) 
 
 - 3D modelling and animation
 - Community support
 - Automated Linux builds
 
-# Education
+## Education
 
-## Australian National University
+### Australian National University
 2014 - 2018 (expected): 
 *Bachelor of Advanced Computing*
 
-### 2014 grades
+#### 2014 grades
 
 <div id="grades">
 
@@ -134,6 +126,6 @@ Course |  | Grade
 </div>
 
 ### Turramurra High School
-Graduated 2013 with an ATAR of 85.9.
+Graduated 2013 with an ATAR of 85.90.
 
 </div>
