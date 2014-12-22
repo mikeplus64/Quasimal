@@ -14,6 +14,7 @@ description: My resume
   <a class="rss" href="/feed.xml">-</a>
   <a href="/resume.html">Resume</a>
 </div>
+<div id="details">
 
 +-----------------+----------------------+
 | Email           | <mike@quasimal.com>  | 
@@ -22,11 +23,12 @@ description: My resume
 +-----------------+----------------------+
 | Phone           | <a href="tel://+61403154462">+61 403 154 462</a>  |
 +-----------------+----------------------+
-| Elsewhere online| [GitHub](https://github.com/mikeplus64), [Hackage](http://hackage.haskell.org/user/MikeLedger)
+| Elsewhere online| [GitHub](https://github.com/mikeplus64), [Hackage](http://hackage.haskell.org/user/MikeLedger), Freenode: `mikeplus64`
 +-----------------+----------------------+
 
 <img id="gravatar" alt="Gravatar" src="https://secure.gravatar.com/avatar/c9f4d28a5240e2b99d83a5848f49c01f?s=200" title="Gravatar (Wallace and Gromit: A Grand Day Out)" />
 <div style="clear: both"></div>
+</div>
 </div>
 
 <div id="content">

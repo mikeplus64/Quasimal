@@ -6,20 +6,29 @@
     border-top: 1px solid #AAA;
     color: white;
     text-shadow: 0px 1px 2px black;
+    overflow: hidden;
+}
+
+#details {
+    position: relative;
 }
 
 #header table {
-    float: left;
+    width: 80%;
+    clear: both;
 }
 
 #gravatar {
+    position: absolute;
+    top: 0;
+    right: 0;
     width: 100px;
     height: 100px;
     padding: 0px;
     margin: 0px;
-    float: right;
     border-radius: 3px;
     box-shadow: 0px 1px 1px black;
+    float: right;
 }
 
 #header table p {
