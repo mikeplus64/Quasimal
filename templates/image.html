@@ -1,6 +1,9 @@
 <div id="image">
-  <img id="gal-img" src="$raw$">
+  <img id="gal-img" src="$raw$" onload="if(window.devicePixelRatio >= 2 && this.naturalWidth >= 900) { this.width = this.naturalWidth*0.5; }">
   <p> $description$ </p>
 </div>
 
+<script src="/js/image.js" type="text/javascript"> </script>
+
 $partial("templates/disqus.html")$
+
