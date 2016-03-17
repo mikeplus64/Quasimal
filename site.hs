@@ -62,7 +62,7 @@ main = hakyll $ do
         >>= makeItem
         >>= loadAndApplyTemplate "templates/image.html"   galleryCtx
         >>= saveSnapshot "html_gal"
-        >>= loadAndApplyTemplate "templates/default.html" defaultContext
+        >>= loadAndApplyTemplate "templates/gallery_wrapper.html" defaultContext
         >>= relativizeUrls
 
   match "index.html" $ do
@@ -94,10 +94,11 @@ main = hakyll $ do
     route idRoute
     compile $ do
       posts <- recentFirst =<< loadAll "posts/*.md"
-      let ctx = mconcat [listField "posts" postCtx (return posts)
-                        ,constField "title" "Posts"
-                        ,defaultContext
-                        ]
+      let ctx = mconcat
+            [ listField "posts" postCtx (return posts)
+            , constField "title" "Posts"
+            , defaultContext
+            ]
       makeItem ""
         >>= loadAndApplyTemplate "templates/post-list.html" ctx
         >>= loadAndApplyTemplate "templates/default.html" ctx
@@ -108,23 +109,23 @@ main = hakyll $ do
     compile $ do
       imgs  <- loadAllSnapshots (hasVersion "html") "html_gal"
       let ctx = mconcat
-            [ listField "gallery"  galleryCtx     (return imgs)
+            [ listField "gallery"  galleryCtx (return imgs)
             , constField "title" "Gallery"
             , defaultContext
             ]
       makeItem ""
         >>= loadAndApplyTemplate "templates/gallery.html" ctx
-        >>= loadAndApplyTemplate "templates/default.html" ctx
         >>= relativizeUrls
 
   create ["projects/index.html"] $ do
     route idRoute
     compile $ do
       posts <- recentFirst =<< loadAll "projects/*.md"
-      let ctx = mconcat [listField "projects" defaultContext (return posts)
-                        ,constField "title" "Projects"
-                        ,defaultContext
-                        ]
+      let ctx = mconcat
+            [ listField "projects" defaultContext (return posts)
+            , constField "title" "Projects"
+            , defaultContext
+            ]
       makeItem ""
         >>= loadAndApplyTemplate "templates/project-list.html" ctx
         >>= loadAndApplyTemplate "templates/default.html" ctx

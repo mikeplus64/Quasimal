@@ -5,12 +5,13 @@
     <title>$title$</title>
     <link rel="stylesheet" href="/css/syntax.css" />
     <link rel="stylesheet" href="/css/default.css" />
+    <link rel="stylesheet" href="/css/gallery.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <body>
+    $partial("templates/nav.html")$
     <div id="main">
-      $partial("templates/nav.html")$
-      <div class="container" id="content">
+      <div class="container" id="content-np">
         <h1>$title$</h1>
         $body$
       </div>

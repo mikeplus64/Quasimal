@@ -1,10 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>$title$</title>
+    <link rel="stylesheet" href="/css/syntax.css" />
+    <link rel="stylesheet" href="/css/default.css" />
+    <link rel="stylesheet" href="/css/gallery.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    $partial("templates/nav.html")$
 
-<div id="gallery">
-  $for(gallery)$
-  <a class="thumb" href="$url$">
-    <img class="thumbimg" width="128" height="128"
-         src="$thumb$" srcset="$thumb$ 1x, $thumb$@2x 2x">
-    <div class="caption"> $title$ </div>
-  </a>
-  $endfor$
-</div>
+    <div id="main">
+      <div class="container" id="content">
+        <h1>$title$</h1>
+        <div id="gallery">
+          $for(gallery)$
+            <a class="thumb" href="$url$">
+              <img class="thumbimg" width="128" height="128"
+                  src="$thumb$" srcset="$thumb$ 1x, $thumb$@2x 2x">
+              <div class="caption"> $title$ </div>
+            </a>
+          $endfor$
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
