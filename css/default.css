@@ -34,7 +34,7 @@ a:visited { color: #256 }
     border-bottom: 2px solid grey;
     border-radius: 2px;
     display: inline-block;
-    background: linear-gradient(#fff, #ddd);
+    background: linear-gradient(#fff, #ddd) !important;
     background-color: #ddd;
     border-bottom: 2px solid white;
 }
@@ -59,29 +59,36 @@ a:visited { color: #256 }
     top: 1px;
 }
 
-.btn.rss {
+.float-right {
     float: right;
-    color: transparent;
-    text-shadow: none;
-    background: center/contain url("/images/rss.svg") no-repeat,
-                linear-gradient(#fff, #ddd);
-}
-
-#navigation a.rss:hover {
-    background: center/contain url("/images/rss.svg") no-repeat,
-                linear-gradient(#fafafa, #ccc);
-}
-
-#navigation a.rss:active {
-    background: center/contain url("/images/rss.svg") no-repeat,
-                linear-gradient(#eee, #bbb);
 }
 
 body {
     background: #344; /* #233A32); */
     background-color: #222223;
     font-family: "Helvetica", sans-serif;
-    font-weight: lighter;
+}
+
+@media(max-width: 810px) {
+    #main {
+        box-shadow: none !important;
+        background-color: white;
+        width: 100% !important;
+        margin: 0 !important;
+    }
+
+    #header {
+        margin: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        border: none !important;
+        padding: none !important;
+    }
+
+    body {
+        background-color: #fff;
+        margin: 0 !important;
+    }
 }
 
 a {
@@ -98,23 +105,30 @@ a:active, a:hover {
     max-width: 811px; /* should fit exactly 6 thumbnails */
     margin: auto;
     word-wrap: break-word;
-    box-shadow: 0px 0px 3px black;
+    box-shadow: 0px 0px 12px black;
 }
 
 img {
     max-width: 100%;
 }
 
+#gallery {
+    max-width: 100%;
+    text-align: justify;
+    text-justify: distribute-all-lines;
+    height: 100%;
+}
 
 .thumb {
+    overflow: hidden;
     text-decoration: none;
     position: relative;
     width: 128px;
     height: 128px;
     display: inline-block;
     border-radius: 3px;
-    /* font stuff here because (the editorial) we change it in .thumb:visited */
     font-family: monospace;
+    word-break: break-all;
     font-size: small;
     text-align: center;
     color: white;

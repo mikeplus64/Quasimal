@@ -22,6 +22,16 @@
     display: inline;
 }
 
+#header h1 {
+    font-size: 19px;
+    font-weight: bolder;
+    color: white;
+    text-shadow: 0px 1px 0px black
+    padding: 0 !important;
+    margin: 0 !important;
+    text-align: center;
+}
+
 #gravatar {
     position: absolute;
     top: 0;
@@ -41,9 +51,15 @@
     color: white;
 }
 
-#header a {
+#header table td:first-child {
+    text-align: right;
+    padding-right: 10px;
+}
+
+#details a {
     color: #aba;
     font-family: monospace;
+    font-style: none;
 }
 
 #skills table p {
@@ -54,100 +70,4 @@
 #grades table, #skills table {
     width: 95%;
     margin: auto;
-}
-
-
-#content {
-    padding: 10px;
-    line-height: 1.3em;
-}
-
-a {
-    color: #256;
-    font-weight: normal;
-}
-a:visited { color: #256 }
-
-body {
-    background-color: #222;
-    font-family: "Helvetica", sans-serif;
-    font-weight: lighter;
-}
-
-a {
-    text-decoration: none;
-}
-
-a:active, a:hover {
-    text-decoration: underline;
-}
-
-#main {
-    border-radius: 7px 7px 3px 3px;
-    box-shadow: 0px 0px 10px black;
-    background-color: white;
-    max-width: 811px; /* should fit exactly 6 thumbnails */
-    margin: auto;
-    word-wrap: break-word;
-}
-
-img {
-    max-width: 100%;
-}
-
-code {
-    font-size: 11pt;
-}
-
-#navigation {
-    margin-bottom: 10px;
-}
-
-#navigation a {
-    position: relative;
-    top: -2px;
-    font-family: "Helvetica", sans-serif;
-    text-decoration: none;
-    background-color: #eee;
-    padding: 5px 14px;
-    font-size: 8pt;
-    text-shadow: 0px 1px white;
-    color: black;
-    box-shadow: 0px 2px 2px black;
-    border-bottom: 2px solid grey;
-    border-radius: 2px;
-    display: inline-block;
-    background: linear-gradient(#fff, #ddd);
-    background-color: #ddd;
-    border-bottom: 2px solid white;
-}
-
-#navigation a:hover {
-    background: linear-gradient(#fafafa, #ccc);
-    background-color: #ccc;
-}
-
-#navigation a:active {
-    background: linear-gradient(#eee, #bbb);
-    background-color: #bbb;
-    position: relative;
-    top: -1px;
-}
-
-#navigation a.rss {
-    float: right;
-    color: transparent;
-    text-shadow: none;
-    background: center/contain url("/images/rss.svg") no-repeat,
-                linear-gradient(#fff, #ddd);
-}
-
-#navigation a.rss:hover {
-    background: center/contain url("/images/rss.svg") no-repeat,
-                linear-gradient(#fafafa, #ccc);
-}
-
-#navigation a.rss:active {
-    background: center/contain url("/images/rss.svg") no-repeat,
-                linear-gradient(#eee, #bbb);
 }
