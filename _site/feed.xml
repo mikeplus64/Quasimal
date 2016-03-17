@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>Quasimal</title>
+        <link>http://quasimal.com</link>
+        <description><![CDATA[There are no musings here.]]></description>
+        <atom:link href="http://quasimal.com/feed.xml" rel="self"
+                   type="application/rss+xml" />
+        <lastBuildDate>Sun, 21 Dec 2014 00:00:00 UT</lastBuildDate>
+        <item>
+    <title>Static indices for speedy array-based algorithms</title>
+    <link>http://quasimal.com/posts/2014-12-21-indices.html</link>
+    <description><![CDATA[<div class="info">
+  Posted on December 21, 2014
+  
+    by Mike Ledger
+  
+</div>
+
+<p><code>GHC.TypeLits</code> gives us some very powerful type-level functionality (with some caveats that will hopefully be worked out in future) that has not yet seen very widespread use. With some mildly ugly leg-work, I’ve made a small library that provides a n-dimensional statically bounded index type, and associated functions for their application with as minimal overhead as possible.</p>
+<h2 id="motivation">Motivation</h2>
+<p>Making <a href="http://quasimal.com/projects/plissken.html">plissken</a>, I was unhappy with the state of linear algebra libraries on Hackage. The venerable <a href="http://hackage.haskell.org/package/hmatrix">hmatrix</a> is excellent - once your input sizes outweigh the constant factors involved. For the matrices that my game engine lived and survived on – 4x4 matrices and 4-vectors – hmatrix was easily outperformed in simple 4x4 matrix multiplication by <a href="http://hackage.haskell.org/package/linear">linear</a>, which is a naiive Haskell implementation of the sort of “small” linear algebra that I need here. I ended up using hmatrix though, since it being built on <code>Storable</code> made for very easy interaction with OpenGL.</p>
+<p>A trick I found in order to inline away “static recursion” was to abstract the use of the recursion parameter into a typeclass whose function is inlined. So long as you remember the all-powerful <code>-O2</code> switch, GHC will happily inline away every recursive call, which will hopefully give way to further compile-time evaluation.</p>
+<p>Here’s a little demonstration of such a class:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE DataKinds #-}</span>
+<span class="ot">{-# LANGUAGE FlexibleContexts #-}</span>
+<span class="ot">{-# LANGUAGE KindSignatures #-}</span>
+<span class="ot">{-# LANGUAGE TypeFamilies #-}</span>
+<span class="ot">{-# LANGUAGE TypeOperators #-}</span>
+<span class="ot">{-# LANGUAGE Undecidableinstances #-}</span> <span class="co">-- our use of this should be fine.</span>
+<span class="kw">module</span> <span class="dt">Playaround</span> <span class="kw">where</span>
+<span class="kw">import </span><span class="dt">Control.Applicative</span>
+<span class="kw">import </span><span class="dt">GHC.TypeLits</span>
+
+<span class="kw">data</span> <span class="dt">Peano</span> <span class="fu">=</span> <span class="dt">Succ</span> <span class="dt">Peano</span> <span class="fu">|</span> <span class="dt">Zero</span>
+
+<span class="kw">class</span> <span class="dt">For</span> (<span class="ot">n ::</span> <span class="dt">Peano</span>) <span class="kw">where</span>
+<span class="ot">  for ::</span> <span class="dt">Applicative</span> m <span class="ot">=&gt;</span> <span class="dt">Proxy</span> n <span class="ot">-&gt;</span> (<span class="dt">Integer</span> <span class="ot">-&gt;</span> m ()) <span class="ot">-&gt;</span> m () <span class="ot">-&gt;</span> m ()
+
+<span class="kw">instance</span> <span class="dt">For</span> <span class="dt">Zero</span> <span class="kw">where</span>
+  <span class="ot">{-# INLINE for #-}</span>
+  for _ _ acc <span class="fu">=</span> acc
+
+<span class="kw">instance</span> (<span class="dt">KnownNat</span> (<span class="dv">1</span><span class="fu">+</span><span class="dt">FromPeano</span> n), <span class="dt">For</span> n) <span class="ot">=&gt;</span> <span class="dt">For</span> (<span class="dt">Succ</span> n) <span class="kw">where</span>
+  <span class="ot">{-# INLINE for #-}</span>
+  for p f acc <span class="fu">=</span> for (next p) f (acc <span class="fu">*&gt;</span> f (peanoVal p))
+
+<span class="ot">next ::</span> <span class="dt">Proxy</span> (<span class="dt">Succ</span> n) <span class="ot">-&gt;</span> <span class="dt">Proxy</span> n
+next _ <span class="fu">=</span> <span class="dt">Proxy</span>
+
+<span class="kw">type</span> family <span class="dt">FromPeano</span> (<span class="ot">n ::</span> <span class="dt">Peano</span>)<span class="ot"> ::</span> <span class="dt">Nat</span> <span class="kw">where</span>
+  <span class="dt">FromPeano</span> <span class="dt">Zero</span>     <span class="fu">=</span> <span class="dv">0</span>
+  <span class="dt">FromPeano</span> (<span class="dt">Succ</span> n) <span class="fu">=</span> <span class="dv">1</span> <span class="fu">+</span> <span class="dt">FromPeano</span> n
+
+<span class="kw">type</span> family <span class="dt">ToPeano</span> (<span class="ot">n ::</span> <span class="dt">Nat</span>)<span class="ot"> ::</span> <span class="dt">Peano</span> <span class="kw">where</span>
+  <span class="dt">ToPeano</span> <span class="dv">0</span> <span class="fu">=</span> <span class="dt">Zero</span>
+  <span class="dt">ToPeano</span> n <span class="fu">=</span> <span class="dt">Succ</span> (<span class="dt">ToPeano</span> (n<span class="fu">-</span><span class="dv">1</span>))
+
+<span class="ot">fromPeano ::</span> <span class="dt">Proxy</span> (<span class="ot">n ::</span> <span class="dt">Peano</span>) <span class="ot">-&gt;</span> <span class="dt">Proxy</span> (<span class="dt">FromPeano</span> n)
+fromPeano _ <span class="fu">=</span> <span class="dt">Proxy</span>
+
+<span class="ot">toPeano ::</span> <span class="dt">Proxy</span> (<span class="ot">n ::</span> <span class="dt">Nat</span>) <span class="ot">-&gt;</span> <span class="dt">Proxy</span> (<span class="dt">ToPeano</span> n)
+toPeano _ <span class="fu">=</span> <span class="dt">Proxy</span>
+
+<span class="ot">peanoVal ::</span> <span class="dt">KnownNat</span> (<span class="dt">FromPeano</span> n) <span class="ot">=&gt;</span> <span class="dt">Proxy</span> (<span class="ot">n ::</span> <span class="dt">Peano</span>) <span class="ot">-&gt;</span> <span class="dt">Integer</span>
+peanoVal <span class="fu">=</span> fromInteger <span class="fu">.</span> natVal <span class="fu">.</span> fromPeano</code></pre></div>
+<p>That’s pretty gross. We can improve it by wrapping it in a small helper:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">niceFor ::</span> (<span class="dt">For</span> (<span class="dt">ToPeano</span> n), <span class="dt">Applicative</span> m)
+        <span class="ot">=&gt;</span> <span class="dt">Proxy</span> (<span class="ot">n ::</span> <span class="dt">Nat</span>) <span class="ot">-&gt;</span> (<span class="dt">Integer</span> <span class="ot">-&gt;</span> m ()) <span class="ot">-&gt;</span> m ()
+niceFor p f <span class="fu">=</span> for (toPeano p) f (pure ())</code></pre></div>
+<p>Unfortunately GHC doesn’t see as we can intuitively, that since all <code>Nat</code> has an instance for <code>ToPeano</code>, <code>For</code> has the instance <code>For (ToPeano (n :: Nat))</code>, so we have to add that constraint.</p>
+<p>Let’s try it out:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE DataKinds #-}</span>
+<span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span>
+<span class="kw">import </span><span class="dt">Playaround</span>
+<span class="kw">import qualified</span> <span class="dt">Data.Vector.Mutable</span> <span class="kw">as</span> <span class="dt">VM</span>
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+  vect <span class="ot">&lt;-</span> M.new <span class="dv">16</span>
+  niceFor (<span class="dt">Proxy</span><span class="ot"> ::</span> <span class="dt">Proxy</span> <span class="dv">15</span>) <span class="fu">$</span> \ix <span class="ot">-&gt;</span> 
+    M.write vect ix ix</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">ghc-core</span> Main.hs
+    <span class="kw">-dsuppress-idinfo</span> \
+    -dsuppress-coercions \
+    -dsuppress-type-applications \
+    -dsuppress-uniques \
+    -dsuppress-module-prefixes</code></pre></div>
+<p>Some scrolling later…</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main1 ::</span> <span class="dt">State</span><span class="fu">#</span> <span class="dt">RealWorld</span> <span class="ot">-&gt;</span> (<span class="fu">#</span> <span class="dt">State</span><span class="fu">#</span> <span class="dt">RealWorld</span>, () <span class="fu">#</span>)
+main1 <span class="fu">=</span>
+  \ (<span class="ot">eta ::</span> <span class="dt">State</span><span class="fu">#</span> <span class="dt">RealWorld</span>) <span class="ot">-&gt;</span>
+    <span class="kw">case</span> newArray<span class="fu">#</span> <span class="dv">16</span> (uninitialised) (eta <span class="ot">`cast`</span> <span class="fu">...</span>)
+    <span class="kw">of</span> _ { (<span class="fu">#</span> ipv, ipv1 <span class="fu">#</span>) <span class="ot">-&gt;</span>
+    <span class="kw">case</span> writeArray<span class="fu">#</span> ipv1 <span class="dv">15</span> (<span class="dt">I</span><span class="fu">#</span> <span class="dv">15</span>) ipv <span class="kw">of</span> s&#39;<span class="fu">#</span> { __<span class="dt">DEFAULT</span> <span class="ot">-&gt;</span>
+    <span class="kw">case</span> writeArray<span class="fu">#</span> ipv1 <span class="dv">14</span> (<span class="dt">I</span><span class="fu">#</span> <span class="dv">14</span>) s&#39;<span class="fu">#</span> <span class="kw">of</span> s&#39;<span class="fu">#</span><span class="dv">1</span> { __<span class="dt">DEFAULT</span> <span class="ot">-&gt;</span>
+    <span class="kw">case</span> writeArray<span class="fu">#</span> ipv1 <span class="dv">13</span> (<span class="dt">I</span><span class="fu">#</span> <span class="dv">13</span>) s&#39;<span class="fu">#</span><span class="dv">1</span> <span class="kw">of</span> s&#39;<span class="fu">#</span><span class="dv">2</span> { __<span class="dt">DEFAULT</span> <span class="ot">-&gt;</span>
+    <span class="kw">case</span> writeArray<span class="fu">#</span> ipv1 <span class="dv">12</span> (<span class="dt">I</span><span class="fu">#</span> <span class="dv">12</span>) s&#39;<span class="fu">#</span><span class="dv">2</span> <span class="kw">of</span> s&#39;<span class="fu">#</span><span class="dv">3</span> { __<span class="dt">DEFAULT</span> <span class="ot">-&gt;</span>
+    <span class="kw">case</span> writeArray<span class="fu">#</span> ipv1 <span class="dv">11</span> (<span class="dt">I</span><span class="fu">#</span> <span class="dv">11</span>) s&#39;<span class="fu">#</span><span class="dv">3</span> <span class="kw">of</span> s&#39;<span class="fu">#</span><span class="dv">4</span> { __<span class="dt">DEFAULT</span> <span class="ot">-&gt;</span>
+    <span class="kw">case</span> writeArray<span class="fu">#</span> ipv1 <span class="dv">10</span> (<span class="dt">I</span><span class="fu">#</span> <span class="dv">10</span>) s&#39;<span class="fu">#</span><span class="dv">4</span> <span class="kw">of</span> s&#39;<span class="fu">#</span><span class="dv">5</span> { __<span class="dt">DEFAULT</span> <span class="ot">-&gt;</span>
+    <span class="kw">case</span> writeArray<span class="fu">#</span> ipv1 <span class="dv">9</span> (<span class="dt">I</span><span class="fu">#</span> <span class="dv">9</span>) s&#39;<span class="fu">#</span><span class="dv">5</span> <span class="kw">of</span> s&#39;<span class="fu">#</span><span class="dv">6</span> { __<span class="dt">DEFAULT</span> <span class="ot">-&gt;</span>
+    <span class="kw">case</span> writeArray<span class="fu">#</span> ipv1 <span class="dv">8</span> (<span class="dt">I</span><span class="fu">#</span> <span class="dv">8</span>) s&#39;<span class="fu">#</span><span class="dv">6</span> <span class="kw">of</span> s&#39;<span class="fu">#</span><span class="dv">7</span> { __<span class="dt">DEFAULT</span> <span class="ot">-&gt;</span>
+    <span class="kw">case</span> writeArray<span class="fu">#</span> ipv1 <span class="dv">7</span> (<span class="dt">I</span><span class="fu">#</span> <span class="dv">7</span>) s&#39;<span class="fu">#</span><span class="dv">7</span> <span class="kw">of</span> s&#39;<span class="fu">#</span><span class="dv">8</span> { __<span class="dt">DEFAULT</span> <span class="ot">-&gt;</span>
+    <span class="kw">case</span> writeArray<span class="fu">#</span> ipv1 <span class="dv">6</span> (<span class="dt">I</span><span class="fu">#</span> <span class="dv">6</span>) s&#39;<span class="fu">#</span><span class="dv">8</span> <span class="kw">of</span> s&#39;<span class="fu">#</span><span class="dv">9</span> { __<span class="dt">DEFAULT</span> <span class="ot">-&gt;</span>
+    <span class="kw">case</span> writeArray<span class="fu">#</span> ipv1 <span class="dv">5</span> (<span class="dt">I</span><span class="fu">#</span> <span class="dv">5</span>) s&#39;<span class="fu">#</span><span class="dv">9</span> <span class="kw">of</span> s&#39;<span class="fu">#</span><span class="dv">10</span> { __<span class="dt">DEFAULT</span> <span class="ot">-&gt;</span>
+    <span class="kw">case</span> writeArray<span class="fu">#</span> ipv1 <span class="dv">4</span> (<span class="dt">I</span><span class="fu">#</span> <span class="dv">4</span>) s&#39;<span class="fu">#</span><span class="dv">10</span> <span class="kw">of</span> s&#39;<span class="fu">#</span><span class="dv">11</span> { __<span class="dt">DEFAULT</span> <span class="ot">-&gt;</span>
+    <span class="kw">case</span> writeArray<span class="fu">#</span> ipv1 <span class="dv">3</span> (<span class="dt">I</span><span class="fu">#</span> <span class="dv">3</span>) s&#39;<span class="fu">#</span><span class="dv">11</span> <span class="kw">of</span> s&#39;<span class="fu">#</span><span class="dv">12</span> { __<span class="dt">DEFAULT</span> <span class="ot">-&gt;</span>
+    <span class="kw">case</span> writeArray<span class="fu">#</span> ipv1 <span class="dv">2</span> (<span class="dt">I</span><span class="fu">#</span> <span class="dv">2</span>) s&#39;<span class="fu">#</span><span class="dv">12</span> <span class="kw">of</span> s&#39;<span class="fu">#</span><span class="dv">13</span> { __<span class="dt">DEFAULT</span> <span class="ot">-&gt;</span>
+    <span class="kw">case</span> writeArray<span class="fu">#</span> ipv1 <span class="dv">1</span> (<span class="dt">I</span><span class="fu">#</span> <span class="dv">1</span>) s&#39;<span class="fu">#</span><span class="dv">13</span> <span class="kw">of</span> s&#39;<span class="fu">#</span><span class="dv">14</span> { __<span class="dt">DEFAULT</span> <span class="ot">-&gt;</span>
+    (<span class="fu">#</span> s&#39;<span class="fu">#</span><span class="dv">14</span>, () <span class="fu">#</span>) <span class="ot">`cast`</span> <span class="fu">...</span>
+    } } } } } } } } } } } } } } } }</code></pre></div>
+<p>Great! The loop is unrolled rather nicely.</p>
+<h2 id="enter-indices">Enter <em>indices</em></h2>
+<p><code>indices</code> provides a multi-dimensional (<code>Int</code> based) index type, with use for array-heavy code in mind. I hope Soon® to release on Hackage the package <a href="https://github.com/mikeplus64/static">static</a> (patches welcome and appreciated) which provides a <code>ForiegnPtr</code> based array type that leverages <code>indices</code>’s, ahem, indices, just about everywhere.</p>
+<p>Indices in <code>indices</code> are these two types:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> (<span class="ot">a ::</span> <span class="dt">Nat</span>) <span class="fu">:.</span> b <span class="fu">=</span> <span class="fu">!</span><span class="dt">Int</span> <span class="fu">:.</span> b
+<span class="kw">data</span> <span class="dt">Z</span> <span class="fu">=</span> <span class="dt">Z</span></code></pre></div>
+<p>This is similar to the design seen in <a href="https://hackage.haskell.org/package/repa">repa</a>, except the “bound” of an index is its type. That’s crippling for code with arbitrarily-bounded arrays, but very nice otherwise. For instance, an index into a 4x4 matrix is <code>0:.0:.Z :: 4:.4:.Z</code> .</p>
+<p>For now, you can use <code>indices</code> for array-based code by leveraging its <code>Ix</code> instance. This is a little confusing due to the design of <code>Ix</code>, but it’s fairly simple: the type is always the upper bound, and zero is always the lower bound, not a value you give. That means that arrays constructed by <code>array (_, _ :: t)</code> are bounded by [0,t). As an aside, I’m leaning towards reworking <code>static</code> to simply use the array types found in <a href="https://hackage.haskell.org/package/arrays">arrays</a> to simplify it greatly into the small linear-algebra package it yearns to be. Input is appreciated here. (At the moment I’m irked at having to store two superfluous lower/upper bounds – linked lists of <code>Int</code> – in the array constructors).</p>
+<p>Here’s a demonstration, implementing vector dot product with a static, unrolled loop:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE DataKinds     #-}</span>
+<span class="ot">{-# LANGUAGE PolyKinds     #-}</span>
+<span class="ot">{-# LANGUAGE TypeOperators #-}</span>
+<span class="ot">{-# LANGUAGE FlexibleContexts #-}</span>
+<span class="kw">module</span> <span class="dt">MM</span> <span class="kw">where</span>
+<span class="kw">import </span><span class="dt">Data.Array.Unboxed</span>
+<span class="kw">import </span><span class="dt">Data.Index</span>
+
+<span class="kw">type</span> <span class="dt">Vector</span> m <span class="fu">=</span> <span class="dt">UArray</span> (m<span class="fu">:.</span><span class="dt">Z</span>)
+
+<span class="ot">sizeV ::</span> <span class="dt">Vector</span> m a <span class="ot">-&gt;</span> <span class="dt">Proxy</span> (m<span class="fu">:.</span><span class="dt">Z</span>)
+sizeV _ <span class="fu">=</span> <span class="dt">Proxy</span>
+
+<span class="ot">vector ::</span> (<span class="dt">IArray</span> <span class="dt">UArray</span> a, <span class="dt">Dim</span> (m<span class="fu">:.</span><span class="dt">Z</span>)) <span class="ot">=&gt;</span> <span class="dt">Proxy</span> (m<span class="fu">:.</span><span class="dt">Z</span>) <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> <span class="dt">Vector</span> m a
+vector b <span class="fu">=</span> listArray (zero, maxBound <span class="ot">`asProxyTypeOf`</span> b)
+
+dot a b <span class="fu">=</span>
+  sfoldlRange
+    (sizeV a <span class="ot">`asTypeOf`</span> sizeV b)
+    (\sum ix <span class="ot">-&gt;</span> sum <span class="fu">+</span> a<span class="fu">!</span>ix <span class="fu">*</span> b<span class="fu">!</span>ix)
+    <span class="dv">0</span>
+
+v4 x y z w <span class="fu">=</span> vector (<span class="dt">Proxy</span><span class="ot"> ::</span> <span class="dt">Proxy</span> (<span class="dv">4</span><span class="fu">:.</span><span class="dt">Z</span>)) [x,y,z,w]
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+  print (dot (v4 <span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span> <span class="dv">4</span>) (v4 <span class="dv">2</span> <span class="dv">3</span> <span class="dv">4</span> <span class="dv">5</span>)<span class="ot"> ::</span> <span class="dt">Double</span>)
+  print (sum (zipWith (<span class="fu">*</span>) [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>] [<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>])<span class="ot"> ::</span> <span class="dt">Double</span>)</code></pre></div>
+<p>Note the slyness in me not writing the type signature to <code>dot</code>… Well, the important thing is that GHC happily infers the type without needing any hints. <em>Right… guys?</em></p>
+<p>You can contribute to <code>indices</code> <a href="https://github.com/mikeplus64/indices">on GitHub</a>, find its documentation <a href="https://hackage.haskell.org/package/indices">on Hackage</a>, and install it with <code>cabal</code>.</p>
+
+<br />
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'quasimal';
+  (function() {
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+]]></description>
+    <pubDate>Sun, 21 Dec 2014 00:00:00 UT</pubDate>
+    <guid>http://quasimal.com/posts/2014-12-21-indices.html</guid>
+    <dc:creator>Mike Ledger</dc:creator>
+</item>
+<item>
+    <title>Plissken</title>
+    <link>http://quasimal.com/projects/plissken.html</link>
+    <description><![CDATA[Snake Plissken... I heard of you.]]></description>
+    <pubDate>Sun, 21 Dec 2014 00:00:00 UT</pubDate>
+    <guid>http://quasimal.com/projects/plissken.html</guid>
+    <dc:creator>Mike Ledger</dc:creator>
+</item>
+<item>
+    <title>A look at QuasiQuotation</title>
+    <link>http://quasimal.com/posts/2012-05-25-quasitext-and-quasiquoting.html</link>
+    <description><![CDATA[A QuasiQuotation tutorial.]]></description>
+    <pubDate>Fri, 25 May 2012 00:00:00 UT</pubDate>
+    <guid>http://quasimal.com/posts/2012-05-25-quasitext-and-quasiquoting.html</guid>
+    <dc:creator>Mike Ledger</dc:creator>
+</item>
+<item>
+    <title>Functional programming in sh</title>
+    <link>http://quasimal.com/posts/2012-05-21-funsh.html</link>
+    <description><![CDATA[<div class="info">
+  Posted on May 21, 2012
+  
+    by Mike Ledger
+  
+</div>
+
+<h4 id="warning-this-code-is-horribly-broken-outside-of-use-in-zsh.">Warning: this code is horribly broken outside of use in Zsh.</h4>
+<h4 id="as-such-all-occurences-of-sh-are-referring-to-posix-shells-ie-bash-and-binsh-which-is-usually-symlinked-to-bash-minus-some-bash-only-features.">As such, all occurences of “sh” are referring to POSIX shells ie bash and /bin/sh, (which is usually symlinked to bash, minus some bash-only features).</h4>
+<p>I find myself trying to do things I can do in GHCi more each passing day in my innocent /bin/sh. I find myself seeking a good balance between the numerous layers of hacks that compose shell script and the <em>purely functional wonder</em> of a Haskell program. Such efforts already exist, most recently in <a href="https://github.com/yesodweb/Shelly.hs#readme">Shelly.hs</a>, but I believe this to be tackling the problem from the wrong end. Instead of hacking together a library to make Haskell code reminiscent of the beloved /bin/sh, the problem should be tackled with extreme prejudice by hacking together a sh script to mimic the best of Haskell, and retain the beauty of shell scripts.</p>
+<h3 id="the-beauty-of-shell-scripts">The beauty of shell scripts?</h3>
+<ul>
+<li>Piping</li>
+<li>(almost) Painless concurrency</li>
+<li>Small overhead (this problem can be alleviated by my efforts, however)</li>
+<li>Easy syntax</li>
+<li>Simplest type system in the world: everything is a string!
+<ul>
+<li>If it’s not a string, it’s a dirty lie.</li>
+<li>$(( A dirty lie. ))</li>
+</ul></li>
+</ul>
+<h3 id="the-horror-of-shell-scripts">The horror of shell scripts</h3>
+<ul>
+<li>The type system makes Visual Basic 6 cry.</li>
+<li>The type system makes a Haskell programmer spend days in solitude contemplating the purpose of human life.</li>
+<li>sh arrays suck
+<ul>
+<li>They are strings</li>
+<li>Sometimes</li>
+</ul></li>
+<li>sh syntax quickly piles up; leaning pipe syndrome</li>
+<li>sh is slow (thanks zsh and dash!)</li>
+</ul>
+<h3 id="complexity-and-fun-sh-vs-haskell">Complexity and fun: sh vs Haskell</h3>
+<p><img class="centre" src="/images/funsh/funsh.png"> When we are compare such vastly different languages as these, you have to remember that they both have extremely different purposes and real world uses. Haskell is an extremely feature rich general purpose programming language. sh is very convenient for simple and mundane tools that are best made by composing other programs together via piping. For those of us who have no idea of what they’re doing 90% of the time when they are using bash (that would be me), there is:</p>
+<p><img class="centre" src="/images/funsh/logo.png"></p>
+<h3 id="enter-fun.sh">Enter fun.sh</h3>
+<p>fun.sh adds some tools seen and used mainly by functional programmers including take, drop, scanl, foldl, map and lambdas. Because sh has no real type system, the convention is to use pipes as you would use lists in Haskell, which allows fun.sh functions to be easily composable via piping.</p>
+<p>Anonymous functions in fun.sh are deceptively dumb. fun.sh will simply consume and remember every argument given up until a “.”, “-&gt;”, “→” or “:” is found, then reading each argument before evaluating the body of the function.</p>
+<h3 id="a-few-demos">A few demos</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># sum of a bash array</span>
+<span class="fu">boring_sum()</span> <span class="kw">{</span>
+    <span class="ot">array=</span><span class="st">&quot;</span><span class="ot">$@</span><span class="st">&quot;</span>
+    <span class="ot">s=</span>0
+    <span class="kw">for</span> <span class="kw">i</span> in <span class="ot">$array</span><span class="kw">;</span> <span class="kw">do</span>
+        <span class="ot">s=$(($i</span> + <span class="ot">$s))</span>
+    <span class="kw">done</span>
+    <span class="kw">echo</span> <span class="ot">$s</span>
+<span class="kw">}</span>
+
+<span class="co"># sum of a bash array, piping the array in</span>
+<span class="fu">boring_sum_pipe()</span> <span class="kw">{</span>
+    <span class="ot">s=</span>0
+    <span class="kw">while</span> <span class="kw">read</span> <span class="ot">i</span>; <span class="kw">do</span>
+        <span class="ot">s=$(($s</span> + <span class="ot">$i))</span>
+    <span class="kw">done</span>
+    <span class="kw">echo</span> <span class="ot">$s</span>
+<span class="kw">}</span>
+
+<span class="co"># now, with fun.sh</span>
+
+$ <span class="fu">sum()</span><span class="kw">{</span> <span class="kw">foldl</span> λ a b . <span class="st">&#39;echo $(($a + $b))&#39;</span> <span class="kw">}</span> 
+$ <span class="kw">list</span> <span class="dt">{1..100}</span> <span class="kw">|</span> <span class="kw">sum</span>
+<span class="kw">5050</span>
+
+<span class="co"># and to show off, </span>
+
+$ <span class="fu">product()</span><span class="kw">{</span> <span class="kw">foldl</span> λ a b . <span class="st">&#39;echo $(($a * $b))&#39;</span> <span class="kw">}</span>
+$ <span class="kw">list</span> <span class="dt">{1..20}</span> <span class="kw">|</span> <span class="kw">product</span>
+<span class="kw">2432902008176640000</span>
+
+$ <span class="fu">factorial()</span><span class="kw">{</span> <span class="kw">list</span> <span class="dt">{1..$1}</span> <span class="kw">|</span> <span class="kw">product</span> <span class="kw">}</span>
+$ <span class="kw">factorial</span> 5
+<span class="kw">120</span>
+
+$ <span class="fu">foobar()</span><span class="kw">{</span> <span class="kw">product</span> <span class="kw">|</span> λ <span class="kw">l</span> . <span class="st">&#39;list {1..$l}&#39;</span> <span class="kw">|</span> <span class="kw">sum</span> <span class="kw">|</span> <span class="kw">md5sum</span> <span class="kw">}</span>
+$ <span class="kw">list</span> <span class="dt">{1,2,3}</span> <span class="kw">|</span> <span class="kw">foobar</span>
+<span class="kw">fe9d26c3e620eeb69bd166c8be89fb8f</span>  -
+
+$ <span class="fu">id()</span><span class="kw">{</span> λ <span class="kw">x</span> . <span class="st">&#39;$x&#39;</span> <span class="kw">}</span>
+$ <span class="kw">id</span> <span class="kw">&lt;&lt;&lt;</span> <span class="st">&#39;echo :)&#39;</span>
+<span class="kw">:</span>)
+
+<span class="co"># Oh no, the boss wants me to calculate the sum of every integer between 400 and 500! Whatever shall I do?!</span>
+$ <span class="kw">list</span> <span class="dt">{400..500}</span> <span class="kw">|</span> <span class="kw">foldl</span> λ x y . <span class="st">&#39;echo $(($x + $y))&#39;</span>
+<span class="kw">45450</span>
+<span class="co"># Thanks fun.sh, I don&#39;t know where I would be without you.</span></code></pre></div>
+<p><a href="https://github.com/mikeplus64/fun.sh">GitHub project</a>.</p>
+
+<br />
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'quasimal';
+  (function() {
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+]]></description>
+    <pubDate>Mon, 21 May 2012 00:00:00 UT</pubDate>
+    <guid>http://quasimal.com/posts/2012-05-21-funsh.html</guid>
+    <dc:creator>Mike Ledger</dc:creator>
+</item>
+<item>
+    <title>Level 0</title>
+    <link>http://quasimal.com/projects/level_0.html</link>
+    <description><![CDATA[<p><a href="https://github.com/mikeplus64/Level-0">GitHub project</a></p>
+<iframe class="centre" width="420" height="315" src="http://www.youtube.com/embed/mJeEqRwLXsA" frameborder="0" allowfullscreen>
+</iframe>
+<p>Level 0 is a Snake II clone written in Haskell, using the SDL libraries.</p>
+<h2 id="features">Features</h2>
+<ul>
+<li>it works</li>
+<li>it’s fast</li>
+<li>readable code (it’s readable to me!)</li>
+<li>map loading</li>
+<li>map editing</li>
+<li>map saving</li>
+<li>scoreboard</li>
+</ul>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>GHC (tested with 7.0.3 and 7.4.1)</li>
+<li>SDL from Hackage</li>
+<li>SDL-ttf from Hackage</li>
+<li>a font (by default tries to get /usr/share/fonts/TTF/TerminusBold.ttf)</li>
+</ul>
+<h2 id="installation-usage">Installation / usage</h2>
+<p><code>$ make</code></p>
+<p><code>$ bin/level_0 [ms between frames [path to map file]]</code></p>
+<p>eg</p>
+<p><code>$ bin/level_0 16 map</code></p>
+<p>I don’t know if it’s buildable on Windows.</p>
+<p>A map is a plain text file, the first 32 characters on the first 32 lines are read, and when there is an ‘x’, you will have a wall that kills your snake when hit.</p>
+<p><img class="centre" src="/images/snake_intro.png"></p>
+]]></description>
+    <pubDate>Sun, 29 Apr 2012 00:00:00 UT</pubDate>
+    <guid>http://quasimal.com/projects/level_0.html</guid>
+    <dc:creator>Mike Ledger</dc:creator>
+</item>
+<item>
+    <title>Greg</title>
+    <link>http://quasimal.com/projects/greg.html</link>
+    <description><![CDATA[<p><a href="https://github.com/mikeplus64/Greg">GitHub project</a></p>
+<h3 id="greg-warrior-irc-bot-princess">Greg, warrior IRC bot princess</h3>
+<p>A small, fast, extensible IRC bot written in Haskell.</p>
+<h3 id="features">Features</h3>
+<ul>
+<li>it works</li>
+<li>it doesn’t crash (much)</li>
+<li>small, simple code base</li>
+</ul>
+<h3 id="installation-usage">Installation / usage</h3>
+<pre class="sh"><code>git clone git://github.com/mikeplus64/Greg.git
+cd Greg
+cabal install
+Greg # make sure ~/.cabal/bin is in $PATH</code></pre>
+<p>From there, you can input text to send to the channel (just by typing it in and pressing enter), or send IRC commands by prefixing your message with “/”. Prefix your message with “//” to send a message starting with “/” to the channel the bot is in.</p>
+<p>Note: if you try to join multiple channels with the one bot, weird things may happen.</p>
+]]></description>
+    <pubDate>Thu, 12 Apr 2012 00:00:00 UT</pubDate>
+    <guid>http://quasimal.com/projects/greg.html</guid>
+    <dc:creator>Mike Ledger</dc:creator>
+</item>
+<item>
+    <title>Hotswap</title>
+    <link>http://quasimal.com/projects/hotswap.html</link>
+    <description><![CDATA[<p><a href="https://github.com/mikeplus64/hotswap">GitHub project</a>.</p>
+<p><a href="http://hackage.haskell.org/package/hotswap">Hotswap</a> is a simple, high level interface to <a href="http://hackage.haskell.org/package/plugins">plugins</a> for hotswapping Haskell code in a simple and automatable manner.</p>
+<h3 id="demo-application-gambling.">Demo application: gambling.</h3>
+<h4 id="main.hs">Main.hs</h4>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Control.Monad</span>
+<span class="kw">import </span><span class="dt">System.Plugins.Hotswap</span>
+<span class="kw">import </span><span class="dt">System.IO</span> (hSetBuffering, stdout, <span class="dt">BufferMode</span> (<span class="dt">NoBuffering</span>))
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+    hSetBuffering stdout <span class="dt">NoBuffering</span>
+    inputHandler <span class="ot">&lt;-</span> newPlugin <span class="st">&quot;Plugin.o&quot;</span> [] <span class="st">&quot;inputHandler&quot;</span><span class="ot"> ::</span> <span class="dt">IO</span> (<span class="dt">Plugin</span> (<span class="dt">IO</span> <span class="dt">Bool</span>))
+    forever <span class="fu">$</span> <span class="kw">do</span>
+        r <span class="ot">&lt;-</span> runPlugin inputHandler
+        when r <span class="fu">$</span> reloadPlugin inputHandler</code></pre></div>
+<h4 id="plugin.hs">Plugin.hs</h4>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">Plugin</span> <span class="kw">where</span>
+<span class="kw">import </span><span class="dt">System.Random</span> (randomRIO)
+
+<span class="ot">inputHandler ::</span> <span class="dt">IO</span> <span class="dt">Bool</span>
+inputHandler <span class="fu">=</span> <span class="kw">do</span>
+    putStrLn <span class="st">&quot;Guess a number between 0 and 10. Guess -1 to reload the plugin.&quot;</span>
+    g <span class="ot">&lt;-</span> fmap read<span class="ot"> getLine ::</span> <span class="dt">IO</span> <span class="dt">Int</span>
+
+    <span class="kw">if</span> g <span class="fu">==</span> <span class="fu">-</span><span class="dv">1</span>
+        <span class="kw">then</span> <span class="kw">do</span>
+            putStrLn <span class="st">&quot;Reloading ...&quot;</span>
+            return <span class="dt">True</span>
+        <span class="kw">else</span> <span class="kw">do</span>
+            r <span class="ot">&lt;-</span> randomRIO (<span class="dv">0</span>, <span class="dv">10</span>)<span class="ot"> ::</span> <span class="dt">IO</span> <span class="dt">Int</span>
+            <span class="kw">if</span> g <span class="fu">==</span> r
+                <span class="kw">then</span> putStrLn <span class="st">&quot;Congratulations! You win nothing!&quot;</span>
+                <span class="kw">else</span> putStrLn <span class="st">&quot;Wrong! You lose nothing, but bring shame to your people.&quot;</span>
+            return <span class="dt">False</span></code></pre></div>
+<p>Then, to compile and run this, I run in a shell:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">~/code/projects/hotswap</span>/<span class="kw">examples&gt;</span> ghc --make -O2 -threaded Main
+[<span class="kw">1</span> of 1] Compiling Main             ( Main.hs, Main.o )
+<span class="kw">Linking</span> Main ...
+<span class="kw">~/code/projects/hotswap</span>/<span class="kw">examples&gt;</span> ghc Plugin
+[<span class="kw">1</span> of 1] Compiling Plugin           ( Plugin.hs, Plugin.o )
+<span class="kw">~/code/projects/hotswap</span>/<span class="kw">examples&gt;</span> ./Main <span class="co"># example run:</span>
+<span class="kw">Guess</span> a number between 0 and 10. Guess -1 to reload the plugin.
+<span class="kw">5</span>
+<span class="kw">Wrong</span>! You lose nothing, but bring shame to your people.
+<span class="kw">Guess</span> a number between 0 and 10. Guess -1 to reload the plugin.
+<span class="kw">4</span>
+<span class="kw">Congratulations</span>! You win nothing!
+<span class="kw">Guess</span> a number between 0 and 10. Guess -1 to reload the plugin.
+<span class="kw">3</span>
+<span class="kw">Wrong</span>! You lose nothing, but bring shame to your people.
+<span class="kw">Guess</span> a number between 0 and 10. Guess -1 to reload the plugin.
+<span class="kw">5</span>
+<span class="kw">Wrong</span>! You lose nothing, but bring shame to your people.
+<span class="kw">Guess</span> a number between 0 and 10. Guess -1 to reload the plugin.
+<span class="kw">6</span>
+<span class="kw">Wrong</span>! You lose nothing, but bring shame to your people.
+<span class="kw">Guess</span> a number between 0 and 10. Guess -1 to reload the plugin.
+<span class="kw">1</span>
+<span class="kw">Wrong</span>! You lose nothing, but bring shame to your people.
+<span class="kw">Guess</span> a number between 0 and 10. Guess -1 to reload the plugin.
+<span class="kw">-1</span>
+<span class="kw">Reloading</span> ...
+<span class="kw">Guess</span> a number between 0 and 10. Guess -1 to reload the plugin.
+^<span class="kw">Z</span>
+<span class="kw">zsh</span>: suspended  ./Main</code></pre></div>
+<p>Pretty mundane. But, lets say I want to change what happens when you guess incorrectly.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">~/code/projects/hotswap</span>/<span class="kw">examples&gt;</span> sed -i -e <span class="st">&quot;s/else putStrLn.*/else putStrLn </span><span class="dt">\&quot;</span><span class="st">HAHA, YOU&#39;RE HORRIBLE</span><span class="dt">\&quot;</span><span class="st">/g&quot;</span> Plugin.hs
+<span class="kw">~/code/projects/hotswap</span>/<span class="kw">examples&gt;</span> ghc Plugin
+[<span class="kw">1</span> of 1] Compiling Plugin           ( Plugin.hs, Plugin.o )
+<span class="kw">~/code/projects/hotswap</span>/<span class="kw">examples&gt;</span> fg
+[<span class="kw">1</span>]  + continued  ./Main
+<span class="kw">5</span>
+<span class="kw">Wrong</span>! You lose nothing, but bring shame to your people.
+<span class="kw">Guess</span> a number between 0 and 10. Guess -1 to reload the plugin.
+<span class="kw">-1</span>
+<span class="kw">Reloading</span> ...
+<span class="kw">Guess</span> a number between 0 and 10. Guess -1 to reload the plugin.
+<span class="kw">4</span>
+<span class="kw">HAHA</span>, YOU<span class="st">&#39;RE HORRIBLE</span>
+<span class="st">Guess a number between 0 and 10. Guess -1 to reload the plugin.</span></code></pre></div>
+<p>And there we have it, hotswapping!</p>
+<h3 id="todo">Todo</h3>
+<ul>
+<li>Entirely automatic hotswapping:
+<ul>
+<li>Specify a source file; it gets compiled for you, and is watched for changes</li>
+<li>A good, cross platform and fast file watching library.</li>
+</ul></li>
+<li>More examples!</li>
+</ul>
+]]></description>
+    <pubDate>Sat, 03 Mar 2012 00:00:00 UT</pubDate>
+    <guid>http://quasimal.com/projects/hotswap.html</guid>
+    <dc:creator>Mike Ledger</dc:creator>
+</item>
+<item>
+    <title>Level 0</title>
+    <link>http://quasimal.com/posts/2012-02-25-level-0.html</link>
+    <description><![CDATA[<div class="info">
+  Posted on February 25, 2012
+  
+    by Mike Ledger
+  
+</div>
+
+<p><img src="/images/snake_intro.png" class="centre"/></p>
+<p>Level 0 is a Snake II (think old-ish Nokia phones) clone written in Haskell, using SDL. <code>cloc</code> tells me it’s 301 LOC, in addition to 49 comments which I’m happy with.</p>
+<p>I’ll make a pretty video, project page etc. once I’ve gathered enough effort, for now, you can simply view the code <a href="https://github.com/mikeplus64/Level-0">on GitHub</a>.</p>
+
+<br />
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname = 'quasimal';
+  (function() {
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+]]></description>
+    <pubDate>Sat, 25 Feb 2012 00:00:00 UT</pubDate>
+    <guid>http://quasimal.com/posts/2012-02-25-level-0.html</guid>
+    <dc:creator>Mike Ledger</dc:creator>
+</item>
+<item>
+    <title>The mandelbrot set having a bad day.</title>
+    <link>http://quasimal.com/posts/2011-12-27-the-mandelbrot-set-having-a-ba.html</link>
+    <description><![CDATA[Just a video I made.]]></description>
+    <pubDate>Tue, 27 Dec 2011 00:00:00 UT</pubDate>
+    <guid>http://quasimal.com/posts/2011-12-27-the-mandelbrot-set-having-a-ba.html</guid>
+    <dc:creator>Mike Ledger</dc:creator>
+</item>
+<item>
+    <title>Fractals and patterns.</title>
+    <link>http://quasimal.com/posts/2011-12-24-fractalsandpatterns.html</link>
+    <description><![CDATA[Some pretty pictures.]]></description>
+    <pubDate>Sat, 24 Dec 2011 00:00:00 UT</pubDate>
+    <guid>http://quasimal.com/posts/2011-12-24-fractalsandpatterns.html</guid>
+    <dc:creator>Mike Ledger</dc:creator>
+</item>
+<item>
+    <title>I have a website!</title>
+    <link>http://quasimal.com/posts/2011-12-23-ihaveawebsite.html</link>
+    <description><![CDATA[zomg, first post]]></description>
+    <pubDate>Fri, 23 Dec 2011 00:00:00 UT</pubDate>
+    <guid>http://quasimal.com/posts/2011-12-23-ihaveawebsite.html</guid>
+    <dc:creator>Mike Ledger</dc:creator>
+</item>
+
+    </channel>
+</rss>

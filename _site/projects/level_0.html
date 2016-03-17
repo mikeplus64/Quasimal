@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Level 0</title>
+    <link rel="stylesheet" type="text/css" href="../css/default.css" />
+  </head>
+  <body>
+    <div id="main">
+      <div id="header">
+        <div id="navigation">
+          <a class="btn" href="../">Home</a>
+          <a class="btn" href="../posts">Posts</a>
+          <a class="btn" href="../projects">Projects</a>
+          <a class="btn" href="../gallery">Gallery</a>
+          <a class="btn" href="../resume.html">Resume</a>
+          <a class="btn rss" href="../feed.xml">-</a>
+        </div>
+        <div id="title">
+          <h1>Level 0</h1>
+        </div>
+      </div>
+      <div id="content">
+        <p><a href="https://github.com/mikeplus64/Level-0">GitHub project</a></p>
+<iframe class="centre" width="420" height="315" src="http://www.youtube.com/embed/mJeEqRwLXsA" frameborder="0" allowfullscreen>
+</iframe>
+<p>Level 0 is a Snake II clone written in Haskell, using the SDL libraries.</p>
+<h2 id="features">Features</h2>
+<ul>
+<li>it works</li>
+<li>it’s fast</li>
+<li>readable code (it’s readable to me!)</li>
+<li>map loading</li>
+<li>map editing</li>
+<li>map saving</li>
+<li>scoreboard</li>
+</ul>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>GHC (tested with 7.0.3 and 7.4.1)</li>
+<li>SDL from Hackage</li>
+<li>SDL-ttf from Hackage</li>
+<li>a font (by default tries to get /usr/share/fonts/TTF/TerminusBold.ttf)</li>
+</ul>
+<h2 id="installation-usage">Installation / usage</h2>
+<p><code>$ make</code></p>
+<p><code>$ bin/level_0 [ms between frames [path to map file]]</code></p>
+<p>eg</p>
+<p><code>$ bin/level_0 16 map</code></p>
+<p>I don’t know if it’s buildable on Windows.</p>
+<p>A map is a plain text file, the first 32 characters on the first 32 lines are read, and when there is an ‘x’, you will have a wall that kills your snake when hit.</p>
+<p><img class="centre" src="../images/snake_intro.png"></p>
+
+      </div>
+    </div>
+  </body>
+</html>
