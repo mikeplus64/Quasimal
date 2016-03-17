@@ -1,0 +1,103 @@
+---
+title: Mike Ledger
+author: Mike Ledger
+date: 22 December, 2014
+description: My resume
+---
+#+BEGIN_HTML
+<div id="header">
+<div id="navigation">
+  <a href="/">Home</a>
+  <a href="/posts">Posts</a>
+  <a href="/projects">Projects</a>
+  <a href="/gallery">Gallery</a>
+  <a class="rss" href="/feed.xml">-</a>
+  <a href="/resume.html">Resume</a>
+</div>
+<div id="details">
+#+END_HTML
+
+|----------+---------------------|
+| Email    | [[mailto:mike@quasimal.com][mike@quasimal.com]]   |
+| Website  | [[quasimal.com][http://quasimal.com]] |
+| Phone    | [[tel:+61403154462][+61 403 154 462]]     |
+| Accounts | [[https://github.com/mikeplus64][GitHub]], [[http://hackage.haskell.org/user/MikeLedger][Hackage]]     |
+|----------+---------------------|
+
+#+BEGIN_HTML
+<img id="gravatar" alt="Gravatar" src="https://secure.gravatar.com/avatar/c9f4d28a5240e2b99d83a5848f49c01f?s=200" title="Gravatar (Wallace and Gromit: A Grand Day Out)" />
+<div style="clear: both"></div>
+</div>
+</div>
+
+<div id="content">
+#+END_HTML
+
+I'm a programmer (and occasional artist) living in Canberra, Australia. I'm 3 years into a [[http://programsandcourses.anu.edu.au/program/AACOM][BAC]]. Currently my technology interests are in type-safe database libraries, Linked Data/DGGS, and all things Haskell. I'm on a team providing a reference implementation for a future [[http://www.w3.org][W3C]] & [[http://www.opengeospatial.org/][OGC]] spec; see [[https://www.w3.org/2015/spatial/charter][Charter for the Spatial Data on the Web Working Group]]), and all things Haskell.
+
+** Skills
+
+#+BEGIN_HTML 
+<div id="skills">
+#+END_HTML
+
+|--------------+--------+-----------+---------------|
+| Haskell      | SQL    | C         | Linux admin   |
+| Python       | Java   | C#        | HTML/CSS      |
+| JavaScript   | Git    | Mercurial | OpenGL / GLSL |
+| Visual Basic | Design | RDF       | ... and more  |
+|--------------+--------+-----------+---------------|
+I have a great deal of experience with developing web servers/backends, where my experience is in using [[http://yesodweb.com][Yesod]], [[http://snapframework.com][Snap]] and [[http://flask.pocoo.org/][Flask]] (where I also gained experience with the wonderful [[http://www.sqlalchemy.org/][SQLAlchemy]]). I'm proficient with PostgreSQL databases where I have experience benchmarking for efficient and minimal queries.
+
+#+BEGIN_HTML 
+</div>
+#+END_HTML
+
+** Public work
+[[https://github.com/ANU-Linked-Earth-Data][Linked Earth Data]] (name TBD :-)), an explorative team project to deliver a highly interoperable DGGS/Linked data → SPARQL/REST endpoint, in order to inform future W3C and OGC standards
+ [[https://www.w3.org/2015/spatial/charter][future W3C and OGC standards]]. Makes use of variable-resolution satellite imagery made available in the [[http://www.datacube.org.au/][Australian Geoscience Datacube]].
+
+[[http://quasimal.com/projects/plissken.html][plissken]], a 3D Snake clone, where
+the Snake moves in 3 dimensions. Used ~OpenGLRaw~, ~hmatrix~, ~GLFW-b~ and ~lens~.
+
+[[http://quasimal.com/projects/level_0.html][Level-0]], a clone of the
+[[https://en.wikipedia.org/wiki/Nokia_1100][Nokia 1100]]'s *Snake II* using the
+SDL bindings for Haskell.
+
+[[http://hackage.haskell.com/package/indices][indices]], a library providing
+statically bounded array indices, extensively making use of GHC features to
+have extremely little runtime overhead.
+
+[[https://github.com/mikeplus64/static][static]], a new array library for
+statically bounded arrays, unrolling operations at compile-time where possible.
+
+[[http://hackage.haskell.org/package/QuasiText][QuasiText]], a simple ~QuasiQuoter~
+for interpolating Haskell values into ~Text~ strings.
+
+** Open source contributions
+
+[[http://hackage.haskell.org/package/snaplet-recaptcha][snaplet-recaptcha]]
+- Updated for new ReCAPTCHA API
+- Heist support
+- Hackage maintainership
+ 
+[[http://hackage.haskell.org/package/hasql][hasql]]
+- Support for PostgreSQL composite types
+
+[[http://hackage.haskell.org/package/lens][lens]]
+- Initial ~makeFields~ implementation.
+
+[[http://redeclipse.net][Red Eclipse]] 
+- 3D modelling and animation
+- Community support
+- Automated Linux builds
+
+[[http://hackage.haskell.org/package/hmatrix][hmatrix]]
+- FFI helpers
+
+** References
+References available on request.
+#+BEGIN_HTML 
+</div>
+#+END_HTML
+
