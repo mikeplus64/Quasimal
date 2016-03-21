@@ -145,7 +145,13 @@ img {
 }
 
 .thumb:hover {
-    box-shadow: 0px 2px 5px rgba(0,0,0,0.3);
+    box-shadow: 0px 2px 7px rgba(0,0,0,1.0)
+              , 0px 1px 14px rgba(255,255,255,0.2);
+}
+
+.thumb:active {
+    box-shadow: 0px 1px 5px rgba(0,0,0,1.0)
+              , 0px 1px 14px rgba(255,255,255,0.2);
 }
 
 #image img {
