@@ -74,7 +74,7 @@ body {
 }
 
 @media(max-width: 860px) {
-    #main {
+    .main, .main-w {
         box-shadow: none !important;
         background-color: white;
         width: 100% !important;
@@ -103,13 +103,18 @@ a:active, a:hover {
     text-decoration: underline;
 }
 
-#main {
+.main {
     border-radius: 7px 7px 3px 3px;
     background-color: white;
     max-width: 860px; /* should fit exactly 6 thumbnails */
     margin: 1em auto 1em auto;
     word-wrap: break-word;
     box-shadow: 0px 0px 12px black;
+}
+
+.main-w {
+    margin: 1em auto 1em auto;
+    max-width: 860px; /* should fit exactly 6 thumbnails */
 }
 
 img {
