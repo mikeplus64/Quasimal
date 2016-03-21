@@ -26,7 +26,7 @@ description: My resume
 <div id="content">
 #+END_HTML
 
-I'm a programmer (and [[http:/gallery][occasional artist]]) living in Canberra, Australia. I'm 3 years into a [[http://programsandcourses.anu.edu.au/program/AACOM][BAC]]. Currently my technology interests are in type-safe database libraries, Linked Data/DGGS, and all things Haskell. I'm on a team providing a reference implementation for a future [[http://www.w3.org][W3C]] & [[http://www.opengeospatial.org/][OGC]] spec; see [[https://www.w3.org/2015/spatial/charter][Charter for the Spatial Data on the Web Working Group]]), and all things Haskell.
+I'm a programmer (and [[http:/gallery][occasional artist]]) living in Canberra, Australia. I'm 3 years into a [[http://programsandcourses.anu.edu.au/program/AACOM][BAC]]. Currently my technology interests are in type-safe database libraries, Linked Data/DGGS, and all things Haskell. I'm on a team providing a reference implementation for a future [[http://www.w3.org][W3C]] & [[http://www.opengeospatial.org/][OGC]] spec; see [[https://www.w3.org/2015/spatial/charter][Charter for the Spatial Data on the Web Working Group]].
 
 ** Skills
 
