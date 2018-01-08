@@ -30,7 +30,7 @@ main = hakyll $ do
     compile $ pandocCompiler
       >>= loadAndApplyTemplate "templates/resume.html" defaultContext
 
-  match "posts/*.md" $ do
+  match postsPattern $ do
     route $ setExtension "html"
     compile $ pandocCompiler
       >>= loadAndApplyTemplate "templates/post.html"    postCtx

@@ -1,0 +1,110 @@
+---
+title: 'radixtree: a prefix-tree parsing library for Haskell'
+author: Mike Ledger
+date: January 8, 2018
+---
+
+This is just a brief post about [[https://hackage.haskell.org/package/radixtree][radixtree]], which is a library that:
+
+1. Produces radix (alternatively, prefix?) trees from ~Text~ values
+2. Provides a generic parser suitable for use with ~attoparsec~, ~trifecta~,
+   ~parsec~, or anything with a ~CharParsing~ (from [[https://hackage.haskell.org/package/parsers][parsers]])
+
+* Background
+I'm developing a requirements authoring tool called Respecify, at [[http://transportengineering.com.au][Transport
+Engineering]]. One of its core features is a nifty (if I do say so myself) parser
+generator that I've used to create an extremely constrained English grammar for,
+which then parses requirements, and enables some other core features of
+Respecify.
+
+The parser has to be able to quickly parse hundreds of requirements at once,
+each containing terms from a fixed (-ish) dictionary of user-specified nouns and
+verbs. The number of terms in these dictionaries can easily number in the
+thousands, so it's critical that this is fast. [[http://quasimal.com/projects/respecify.html][See this short project page for
+more information about Respecify.]]
+
+* Foreground
+Radix trees are a much-beloved data structure useful for parsing terms from
+large dictionaries with lots of similar prefixes (e.g., English). In this
+context, each edge from a specific node is labelled with the text needed to
+advance a parser to the next node, and each node is marked with whether or not
+the parser can terminate successfully there, returning whatever datum is at that
+node.
+
+# #+BEGIN_SRC dot :file ../images/prefix-tree.svg
+# digraph {
+#   rankdir=LR;
+#   dog,door,doofus,dingo,drainage [style=filled];
+#   s0,d,do,doo [style=dashed];
+#   s0 [label="⬚"];
+#   s0 -> d [label=d];
+#   d -> drainage [label=rainage];
+#   d -> do [label=o];
+#   d -> dingo [label=ingo];
+#   do -> dog [label=g];
+#   do -> doo [label=o];
+#   doo -> door [label=r];
+#   doo -> doofus [label=fus];
+# }
+# #+END_SRC
+# #+RESULTS:
+# [[file:../images/prefix-tree.svg]]
+
+[[file:../images/prefix-tree.svg]]
+
+** Performance
+
+The motivation is simply speed. Parsing large corpuses can be *much* faster with
+this approach. Benchmark results on a corpus of around 800 English terms
+demonstrate this:
+
+#+BEGIN_SRC
+Benchmark radixtree-parsing: RUNNING...
+benchmarking attoparsec/radix
+time                 5.032 μs   (5.025 μs .. 5.041 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 5.035 μs   (5.027 μs .. 5.047 μs)
+std dev              31.24 ns   (23.48 ns .. 45.45 ns)
+
+benchmarking attoparsec/radix compressed
+time                 5.041 μs   (5.031 μs .. 5.053 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 5.060 μs   (5.045 μs .. 5.084 μs)
+std dev              59.94 ns   (42.56 ns .. 82.04 ns)
+
+benchmarking attoparsec/naiive
+time                 69.32 μs   (69.16 μs .. 69.47 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 69.54 μs   (69.28 μs .. 69.89 μs)
+std dev              1.028 μs   (778.0 ns .. 1.251 μs)
+
+Benchmark radixtree-parsing: FINISH
+#+END_SRC
+
+I don't know and haven't measured if, for Respecify's use-case, ~radixtree~ is
+actually faster than e.g., tokenising and using a hashtable / ~HashMap~, though
+that approach also has its own unique downsides. Namely, that you actually have
+to define what a token is: even though a user might want the term "IEEE 754" in
+their references dictionary, the parser would have to lookup "IEEE", *then*
+"IEEE 754". But if the user just wants to ignore the parse error because "IEEE
+754" isn't in their reference list yet, the parser will have to just keep trying
+with each new token, e.g. "IEEE 754 is", "IEEE 754 is great", etc.
+
+** Memory use
+
+The trade-off is that a ~RadixTree~ uses much more memory than a simple list of
+terms, though this is slightly mitigated with a clever (i.e., probably horribly
+dangerous – though it hasn't done anything evil to me yet, and the test suite
+seems to validate it) variant named ~CompressedRadixTree~, which just relies on
+a single ~Text~ array for *all* of its edges and leafs.
+
+| Variant               | Size in bytes |
+|-----------------------+---------------|
+| ~[Text]~              |         69840 |
+| ~Vector Text~         |         56952 |
+| ~CompressedRadixTree~ |        254032 |
+| ~RadixTree~           |        709904 |
+
+* Links
+1. [[https://hackage.haskell.org/package/radixtree][Hackage]]
+2. [[https://gitlab.com/transportengineering/radixtree][GitLab]]
