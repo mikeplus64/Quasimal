@@ -81,6 +81,9 @@ std dev              1.028 μs   (778.0 ns .. 1.251 μs)
 Benchmark radixtree-parsing: FINISH
 #+END_SRC
 
+(Here, "naiive" refers to, basically, ~choice . map text . sortOn (negate .
+length)~.)
+
 I don't know and haven't measured if, for Respecify's use-case, ~radixtree~ is
 actually faster than e.g., tokenising and using a hashtable / ~HashMap~, though
 that approach also has its own unique downsides. Namely, that you actually have
@@ -104,6 +107,13 @@ a single ~Text~ array for *all* of its edges and leafs.
 | ~Vector Text~         |         56952 |
 | ~CompressedRadixTree~ |        254032 |
 | ~RadixTree~           |        709904 |
+
+* Example code
+
+* TODOs
+1. Become less afraid of ~CompressedRadixTree~
+2. Allow arbitrary data to be accepted by ~RadixTree~, so they can be used as
+   an alternative to ~HashMap Text~.
 
 * Links
 1. [[https://hackage.haskell.org/package/radixtree][Hackage]]
