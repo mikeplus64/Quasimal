@@ -1,0 +1,16 @@
+---
+title: teamsplat
+description: a bloated-yet-little team generator for 2-team games
+published: 2017-01-08
+---
+
+Teamsplat generates fair teams for 2-team games by brute-forcing all the
+possible alternatives. The backend uses Servant and either PostgreSQL (because
+Heroku needed it) or SQLite. The frontend is a bloated single-page application
+notably using Grommet and Flowtype.
+
+Teamsplat uses [[https://hackage.haskell.org/package/aeson-flowtyped][aeson-flowtyped]] -- another project of mine -- to generate
+flowtype type declarations for the JSON API that the backend exposes.
+
+Available online [[https://teamsplat.herokuapp.com][on Heroku]] and [[https://github.com/mikeplus64/teamsplat][on GitHub]].
+
