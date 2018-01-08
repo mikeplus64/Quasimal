@@ -1,2 +1,2 @@
-#!/bin/zsh
+#!/bin/sh
 convert "$1" -thumbnail "$2" -gravity center -background black -extent "$2" -quality 100 jpg:-
