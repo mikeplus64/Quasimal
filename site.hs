@@ -23,7 +23,7 @@ main = hakyll $ do
 
   match "js/*" $ do
     route   idRoute
-    compile compressCssCompiler
+    compile copyFileCompiler
 
   match (fromList ["resume.org"]) $ do
     route   $ setExtension "html"
