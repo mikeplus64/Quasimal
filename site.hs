@@ -5,6 +5,12 @@ import Hakyll
 import System.Environment
 import Text.Regex
 
+projectsPattern :: Pattern
+projectsPattern = "projects/*.md" .||. "projects/*.org"
+
+postsPattern :: Pattern
+postsPattern = "posts/*.md" .||. "posts/*.org"
+
 main :: IO ()
 main = hakyll $ do
   match "images/**" $ do
@@ -32,7 +38,7 @@ main = hakyll $ do
       >>= loadAndApplyTemplate "templates/default.html" postCtx
       >>= relativizeUrls
 
-  match "projects/*.md" $ do
+  match projectsPattern $ do
     route $ setExtension "html"
     compile $ pandocCompiler
       >>= loadAndApplyTemplate "templates/project.html" defaultContext
@@ -68,8 +74,8 @@ main = hakyll $ do
   match "index.html" $ do
     route idRoute
     compile $ do
-      posts <- recentFirst =<< loadAll "posts/*.md"
-      projs <- recentFirst =<< loadAll "projects/*.md"
+      posts <- recentFirst =<< loadAll postsPattern
+      projs <- recentFirst =<< loadAll projectsPattern
       let indexCtx = mconcat
             [ listField "posts"    postCtx        (return posts)
             , listField "projects" defaultContext (return projs)
@@ -85,15 +91,15 @@ main = hakyll $ do
     route idRoute
     compile $ do
       let feedCtx = postCtx `mappend` bodyField "description"
-      projs <- loadAllSnapshots "projects/*.md" "proj-content"
-      posts <- loadAllSnapshots "posts/*.md" "post-content"
+      projs <- loadAllSnapshots projectsPattern "proj-content"
+      posts <- loadAllSnapshots postsPattern "post-content"
       both  <- recentFirst (projs ++ posts)
       renderRss feedCfg feedCtx both
 
   create ["posts/index.html"] $ do
     route idRoute
     compile $ do
-      posts <- recentFirst =<< loadAll "posts/*.md"
+      posts <- recentFirst =<< loadAll postsPattern
       let ctx = mconcat
             [ listField "posts" postCtx (return posts)
             , constField "title" "Posts"
@@ -120,7 +126,7 @@ main = hakyll $ do
   create ["projects/index.html"] $ do
     route idRoute
     compile $ do
-      posts <- recentFirst =<< loadAll "projects/*.md"
+      posts <- recentFirst =<< loadAll projectsPattern
       let ctx = mconcat
             [ listField "projects" defaultContext (return posts)
             , constField "title" "Projects"

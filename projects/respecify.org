@@ -1,0 +1,23 @@
+---
+title: Respecify
+published: 2018-01-08
+---
+
+#+BEGIN_HTML
+<iframe width="420" height="315" src="http://www.youtube.com/embed/8UoQ5q13y_I" frameborder="0" allowfullscreen></iframe>
+#+END_HTML
+
+Respecify is a novel web-based requirements authoring tool developed by me, for
+[[http://transportengineering.com.au][Transport Engineering]], utilising constrained natural language.
+
+Respecify aids requirements engineers by applying a simple English grammar that
+ensures:
+1. Basic syntactic correctness.
+2. All terms within a specification are defined and have at most 1 meaning.
+3. The relationships specified do not contradict eachother.
+4. Requirements meet some basic quality checks.
+
+We have found in practise that this simple approach can be a huge step-up from
+the current state-of-the-art of using Excel spreadsheets.
+
+A [[http://ieeexplore.ieee.org/document/8049164/][tool demonstration]] was published for [[http://re2017.org/][RE'17]].
