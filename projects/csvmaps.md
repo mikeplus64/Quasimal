@@ -1,11 +1,12 @@
 ---
-title: 'csvmaps: a tool for manipulating map-like CSV files'
+title: csvmaps
 published: January 9, 2019
 author: Mike Ledger
 ---
 
 This is a command-line tool for manipulating map-like CSV data, where the first
-column is treated as a "key" for that row.
+column is treated as a "key" for that row. Please see the README for the most
+up-to-date documentation: https://gitlab.com/transportengineering/csvmaps
 
 ## Installation 
 

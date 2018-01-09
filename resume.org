@@ -81,6 +81,8 @@ or Blaze.
 [[https://github.com/mikeplus64/aeson-flowtyped][aeson-flowtyped]], a Haskell library for generating Flowtype type declarations to
 match ~aeson~'s ~ToJSON~ / ~FromJSON~ instances.
 
+[[https://gitlab.com/transportengineering/csvmaps][csvmaps]], a tool for manipulating map-like .csv files.
+
 [[http://quasimal.com/projects/plissken.html][plissken]], a 3D Snake clone, where the Snake moves in 3 dimensions. Used
 ~OpenGLRaw~, ~hmatrix~, ~GLFW-b~ and ~lens~.
 
