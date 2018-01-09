@@ -1,9 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
-import Data.List
-import Data.Monoid
-import Hakyll
-import System.Environment
-import Text.Regex
+import           Data.Monoid
+import           Hakyll
+import           Text.Regex
 
 projectsPattern :: Pattern
 projectsPattern = "projects/*.md" .||. "projects/*.org"
@@ -76,10 +74,11 @@ main = hakyll $ do
     compile $ do
       posts <- recentFirst =<< loadAll postsPattern
       projs <- recentFirst =<< loadAll projectsPattern
+      imgs  <- fmap (take 10) . recentFirst =<< loadAllSnapshots (hasVersion "html") "html_gal"
       let indexCtx = mconcat
-            [ listField "posts"    postCtx        (return posts)
+            [ listField "posts" postCtx (return posts)
             , listField "projects" defaultContext (return projs)
-            , constField "title" "Quasimal"
+            , listField "gallery" galleryCtx (return imgs)
             , defaultContext
             ]
       getResourceBody
@@ -113,9 +112,9 @@ main = hakyll $ do
   create ["gallery/index.html"] $ do
     route idRoute
     compile $ do
-      imgs  <- loadAllSnapshots (hasVersion "html") "html_gal"
+      imgs  <- recentFirst =<< loadAllSnapshots (hasVersion "html") "html_gal"
       let ctx = mconcat
-            [ listField "gallery"  galleryCtx (return imgs)
+            [ listField "gallery" galleryCtx (return imgs)
             , constField "title" "Gallery"
             , defaultContext
             ]
@@ -149,14 +148,12 @@ galleryVersion v =
   <> field "description" (\item -> do
     meta <- getMetadataField (itemIdentifier item) "description"
     return (maybe "" id meta))
-
  where
   setExt exp =
     if v == "thumb"
     then case splitRegex (mkRegex "\\.") exp of
            p : _ -> p ++ ".jpg"
            _     -> exp
-
     else exp
   replacer r = case splitAll "/" r of
     "gallery":_ -> "/gallery/" ++ v ++ '/':drop 8 r

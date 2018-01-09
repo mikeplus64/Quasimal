@@ -1,0 +1,9 @@
+<div id="gallery">
+  $for(gallery)$
+    <a class="thumb" href="$url$">
+      <img class="thumbimg" width="128" height="128"
+          src="$thumb$" srcset="$thumb$ 1x, $thumb$@2x 2x">
+      <div class="caption"> $title$ </div>
+    </a>
+  $endfor$
+</div>
