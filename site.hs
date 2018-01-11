@@ -74,7 +74,8 @@ main = hakyll $ do
     compile $ do
       posts <- recentFirst =<< loadAll postsPattern
       projs <- recentFirst =<< loadAll projectsPattern
-      imgs  <- fmap (take 10) . recentFirst =<< loadAllSnapshots (hasVersion "html") "html_gal"
+      imgs  <- fmap (take 10) . recentFirst =<< loadAllSnapshots (images .&&.
+                                                                  hasVersion "html") "html_gal"
       let indexCtx = mconcat
             [ listField "posts" postCtx (return posts)
             , listField "projects" defaultContext (return projs)

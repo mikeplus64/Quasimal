@@ -1,0 +1,270 @@
+---
+title: nice-html, a fast and fancy HTML generation library
+author: Mike Ledger
+date: January 11, 2018
+---
+
+I've been working on and off on a HTML templating library for a few months. It
+was originally intended for use in [[/projects/respecify.html][Respecify]], but that evolved into a
+single-page application. Thus a library for fast server-side HTML generation
+wasn't necessary any more. (Though you could just as well use ~nice-html~ on a
+frontend through GHCJS.)
+
+The biggest difference is that templates are compiled, so as much HTML is
+"rendered" (i.e., as many strings are concatenated as possible :-))
+ahead-of-time as possible. This isn't an extremely clever optimisation, but it
+can make a huge difference in render times. It also uses ~Text~ internally,
+though this might change, because presumably encoding ~Text~ to UTF-8 ready to
+be sent over a network isn't free.
+
+To make it possible to still "inject" data into a template, a type parameter is
+given to the markup (compiled ~FastMarkup~ and non-compiled ~Markup~) that gives
+templates "holes". e.g., a template that requires the description of a person to
+render could be typed ~tpl :: FastMarkup (Person -> Text)~. On the other hand, a
+template with absolutely no dynamic data can be typed ~tpl :: forall a.
+FastMarkup a~ — or just ~tpl :: FastMarkup Void~.
+
+There are a few functions for rendering templates; take your pick. The
+easiest-to-use, and most magical, is ~r :: Render a m => a -> m Builder~. This
+allows you to render any ~FastMarkup~, constraining ~m~ to be a ~ReaderT~ monad
+when the parameter to ~FastMarkup~ has an arrow. A simpler and less magical
+alternative ~renderM :: Monad m => (a -> m Builder) -> FastMarkup a -> m Builder~ 
+is also provided.
+
+That is, given a simple template like:
+#+BEGIN_SRC haskell
+data Params = Params { param1 :: Text }
+tpl :: FastMarkup (Params -> Text)
+tpl = compile $ do -- note compile :: Markup t a -> FastMarkup t
+  p_ $ do
+    "param1 is:" 
+    dynamic param1
+#+END_SRC
+
+Rendering can be achieved with:
+#+BEGIN_SRC haskell
+-- using the Reader interface:
+r tpl `runReaderT` Params{param1 = "i am param1!!!"} :: Monad m => m Builder
+
+-- alternatively using (:$) :: FastMarkup (a -> b) -> a -> a :$ b
+r (tpl :$ Param{param1 = "i am param1!!!"}) :: Monad m => m Builder
+
+-- alternatively using 
+-- renderM :: Monad m => (a -> m Builder) -> FastMarkup a -> m Builder
+-- for shunners of magic
+renderM (\f -> return (fromText (f Param1{param1 = "i am param1!!!"}))) tpl 
+  :: Monad m => m Builder
+#+END_SRC
+
+The biggest drawback of this approach is that it's more difficult to write
+templates in this style, despite whatever benefits it confers. The primitives
+that you need to be aware of for inserting "dynamic" data are:
+
+1. ~dynamic :: p -> Markup p ()~ inserts a hole that will be escaped.
+2. ~dynamicRaw :: p -> Markup p ()~ inserts a hole that won't be escaped, e.g.
+   for a chunk of HTML.
+3. ~stream :: Foldable f => Markup (a -> n) r -> Markup (f a -> FastMarkup n) r~
+   Inserts a hole for any old ~Foldable~ -- e.g. ~[Text]~, ~[Article]~, 
+   ~Vector TodoItem~ etc. 
+   This is admittedly a bit of a misnomer, since most sane ~Foldable~ s won't ever actually stream. 
+   Except for ~String~ s produced by ~Prelude.readFile~, ~Prelude.getContents~, 
+   etc., but these functions are increasingly taboo.
+4. ~sub :: Markup n a -> Markup (FastMarkup n) a~ Puts templates in your
+   templates.
+
+**  A complete example
+
+#+BEGIN_SRC haskell
+{-# LANGUAGE OverloadedStrings #-}
+module TodoList where
+import           Data.Text                   (Text)
+import           Text.Html.Nice              ((:$) (..), Attr (..), Builder,
+                                              FastMarkup, Render (..))
+import           Text.Html.Nice.Writer
+import           Text.Html.Nice.Writer.Html5
+
+data Todo = Todo
+  { todoDate :: Text
+  , todoText :: Text
+  }
+
+todos :: [Todo]
+todos =
+  [ Todo "october 25 2017" "write todo list <html>asdf</html>" -- escaped
+  , Todo "october 26 2017" "write another todo list"
+  ]
+
+template :: FastMarkup ([Todo] -> FastMarkup Text)
+template = compile $ do
+  doctype_
+  html_ $ do
+    head_ $ title_ "Todo list"
+    body_ $ do
+      h1_ "Todo list"
+      stream $ div_ ! "class" := "todo-item" $ do
+        text "\n<script></script>\n" -- this gets escaped
+        b_ (dynamic todoText)
+        " ("
+        dynamic todoDate
+        ")"
+
+test :: Monad m => m Builder
+test = r (template :$ todos)
+#+END_SRC
+
+* Performance
+
+These benchmarks derive from ~blaze-markup~'s "bigtable" benchmark; but aren't
+exactly the same. They've been shamelessly altered -- I added some static markup
+to the front and end of the templates, since that's more realistic than a table
+on its own -- to highlight the strengths of ~nice-html~.
+
+The benchmark itself generates a table of N rows, and measures the time taken to
+render, as well as the amount of memory used, using the venerable ~criterion~
+and the underrated ~weigh~. The ~nice-html~ version looks (and by looks, I mean
+"is") like:
+
+#+BEGIN_SRC haskell
+{-# LANGUAGE OverloadedStrings #-}
+-- derived from https://github.com/jaspervdj/blaze-markup/blob/master/benchmarks/bigtable/html.hs
+module BigTable.Nice where
+import           Control.Monad.Trans.Reader (runReader)
+import           Criterion.Main             (Benchmark, bench, nf)
+import           Data.Text.Lazy             (Text)
+import           Data.Text.Lazy.Builder     (Builder, toLazyText)
+import           Data.Text.Lazy.Builder.Int (decimal)
+import           Weigh                      (Weigh, func)
+
+import           Text.Html.Nice
+
+rows :: FastMarkup ([[Int]] -> FastMarkup (FastMarkup Builder))
+rows = compile $ do
+  h1_ "i am a real big old table\n"
+  p_ "i am good at lots of static data\n"
+  p_ "i am glab at lots of static data\n"
+  p_ "i am glob at lots of static data\n"
+  p_ "i am glib at lots of static data\n"
+  p_ "i am glub at lots of static data\n"
+  p_ "i am glom at lots of static data\n"
+  p_ "i am glof at lots of static data\n"
+  p_ "i am gref at lots of static data\n"
+  p_ "i am greg at lots of static data\n"
+  table_ $ do
+    thead_ . tr_ . mapM_ (th_ . builder . decimal) $ [1..10 :: Int]
+    tbody_ . stream . tr_ . stream . td_ $ do
+      p_ "hi!\n"
+      dynamic decimal
+      p_ "hello!\n"
+  p_ "i am good at lots of static data\n"
+  p_ "i am glab at lots of static data\n"
+  p_ "i am glob at lots of static data\n"
+  p_ "i am glib at lots of static data\n"
+  p_ "i am glub at lots of static data\n"
+  p_ "i am glom at lots of static data\n"
+  p_ "i am glof at lots of static data\n"
+  p_ "i am gref at lots of static data\n"
+  p_ "i am greg at lots of static data\n"
+
+bigTable :: [[Int]] -> Text
+bigTable table = toLazyText (r rows `runReader` table)
+
+benchmark :: [[Int]] -> Benchmark
+benchmark t = bench "nice" (bigTable `nf` t)
+
+weight :: [[Int]] -> Weigh ()
+weight i = func (show (length i) ++ "/nice") bigTable i
+#+END_SRC
+
+
+** Runtime
+
+Abridged: ~blaze~ is fast; ~lucid~ is faster; ~nice-html~ is *fasterer*.
+
+#+BEGIN_SRC
+Benchmark perf: RUNNING...
+benchmarking 10/blaze
+time                 91.73 μs   (91.10 μs .. 92.33 μs)
+                     1.000 R²   (0.999 R² .. 1.000 R²)
+mean                 92.64 μs   (92.25 μs .. 93.03 μs)
+std dev              1.358 μs   (1.073 μs .. 1.807 μs)
+             
+benchmarking 10/nice
+time                 35.76 μs   (35.52 μs .. 36.00 μs)
+                     1.000 R²   (0.999 R² .. 1.000 R²)
+mean                 35.50 μs   (35.28 μs .. 35.67 μs)
+std dev              626.9 ns   (467.4 ns .. 811.9 ns)
+variance introduced by outliers: 14% (moderately inflated)
+             
+benchmarking 10/lucid
+time                 57.08 μs   (56.91 μs .. 57.27 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 57.20 μs   (56.94 μs .. 57.36 μs)
+std dev              711.5 ns   (531.2 ns .. 1.126 μs)
+             
+benchmarking 100/blaze
+time                 762.7 μs   (760.5 μs .. 764.2 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 762.0 μs   (759.5 μs .. 763.9 μs)
+std dev              7.546 μs   (5.949 μs .. 9.589 μs)
+             
+benchmarking 100/nice
+time                 344.2 μs   (342.9 μs .. 345.4 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 343.5 μs   (342.4 μs .. 344.5 μs)
+std dev              3.498 μs   (2.939 μs .. 4.304 μs)
+             
+benchmarking 100/lucid
+time                 486.5 μs   (485.2 μs .. 487.8 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 485.5 μs   (483.9 μs .. 486.6 μs)
+std dev              4.137 μs   (2.838 μs .. 7.064 μs)
+             
+benchmarking 1000/blaze
+time                 7.243 ms   (7.183 ms .. 7.310 ms)
+                     0.999 R²   (0.998 R² .. 1.000 R²)
+mean                 7.298 ms   (7.246 ms .. 7.347 ms)
+std dev              147.5 μs   (125.5 μs .. 178.1 μs)
+             
+benchmarking 1000/nice
+time                 3.422 ms   (3.387 ms .. 3.465 ms)
+                     0.999 R²   (0.999 R² .. 1.000 R²)
+mean                 3.420 ms   (3.402 ms .. 3.436 ms)
+std dev              56.16 μs   (46.34 μs .. 69.55 μs)
+             
+benchmarking 1000/lucid
+time                 4.689 ms   (4.661 ms .. 4.714 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 4.685 ms   (4.667 ms .. 4.698 ms)
+std dev              48.05 μs   (38.33 μs .. 62.37 μs)
+             
+Benchmark perf: FINISH
+#+END_SRC
+
+** Memory use, including compilation overhead
+
+#+BEGIN_SRC
+Benchmark mem: RUNNING...
+             
+Case         Allocated  GCs
+10/blaze       597,808    1
+10/nice      3,062,248    5
+10/lucid       247,008    0
+100/blaze    4,556,200    8
+100/nice     5,716,888   11
+100/lucid    1,735,160    3
+1000/blaze  44,138,200   85
+1000/nice   32,264,800   62
+1000/lucid  16,582,944   29
+Benchmark mem: FINISH
+#+END_SRC
+
+
+** Environment info
+- packages pulled from Stackage's ~lts-8.13~ resolver.
+- ~nice-html-0.3.0~
+- ~lucid-2.9.8.1~
+- ~blaze-html-0.8.1.3~ and ~blaze-markup-0.7.1.1~
+
+
+
+Enjoy!
