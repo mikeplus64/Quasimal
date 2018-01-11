@@ -11,11 +11,11 @@ wasn't necessary any more. (Though you could just as well use ~nice-html~ on a
 frontend through GHCJS.)
 
 The biggest difference is that templates are compiled, so as much HTML is
-"rendered" (i.e., as many strings are concatenated as possible :-))
-ahead-of-time as possible. This isn't an extremely clever optimisation, but it
-can make a huge difference in render times. It also uses ~Text~ internally,
-though this might change, because presumably encoding ~Text~ to UTF-8 ready to
-be sent over a network isn't free.
+"rendered" (i.e., as many strings are concatenated as possible ☺) ahead-of-time
+as possible. This isn't an extremely clever optimisation, but it can make a
+pretty big difference in render times. It also uses ~Text~ internally, though
+this might change, because presumably encoding ~Text~ to UTF-8 ready to be sent
+over a network isn't free.
 
 To make it possible to still "inject" data into a template, a type parameter is
 given to the markup (compiled ~FastMarkup~ and non-compiled ~Markup~) that gives
@@ -64,12 +64,13 @@ that you need to be aware of for inserting "dynamic" data are:
 2. ~dynamicRaw :: p -> Markup p ()~ inserts a hole that won't be escaped, e.g.
    for a chunk of HTML.
 3. ~stream :: Foldable f => Markup (a -> n) r -> Markup (f a -> FastMarkup n) r~
-   Inserts a hole for any old ~Foldable~ -- e.g. ~[Text]~, ~[Article]~, 
+   inserts a hole for any old ~Foldable~ -- e.g. ~[Text]~, ~[Article]~, 
    ~Vector TodoItem~ etc. 
    This is admittedly a bit of a misnomer, since most sane ~Foldable~ s won't ever actually stream. 
    Except for ~String~ s produced by ~Prelude.readFile~, ~Prelude.getContents~, 
    etc., but these functions are increasingly taboo.
-4. ~sub :: Markup n a -> Markup (FastMarkup n) a~ Puts templates in your
+
+5. ~sub :: Markup n a -> Markup (FastMarkup n) a~ puts templates in your
    templates.
 
 **  A complete example
@@ -265,6 +266,28 @@ Benchmark mem: FINISH
 - ~lucid-2.9.8.1~
 - ~blaze-html-0.8.1.3~ and ~blaze-markup-0.7.1.1~
 
+* Roadmap
 
+1. A more honestly streaming ~stream~ using e.g. ~streaming~ or ~pipes~ or
+   ~conduit~ -- or maybe all 3 at once, just to stick it to the zealots of each
+   ☺ -- shouldn't be *too* hard to implement.
+
+2. Rewrite ~Text.Html.Nice.Writer~ to just use a plain-old ~State~ or ~Writer~
+   monad internally.
+
+4. Have a virtual-DOM-esque ~rerender~ function that (somehow) only re-renders
+   what is likely (i.e, if a parameter has changed) to change, and some
+   JavaScript glue code to enable a client to replace "old" HTML. I've scratched
+   at the surface of this with ~note~, which just gives nodes a unique ~id~
+   attribute, but it would be *really* neat to achieve this -- my eventual dream
+   is to be able to write fast server-side single-page-applications (especially
+   if updates are facilitated over e.g. a WebSocket) entirely in Haskell without
+   needing GHCJS. [[https://github.com/ghcjs/jsaddle][~jsaddle~]] might already do this but I haven't seriously looked
+   into it.
+
+* Quick links
+1. [[https://hackage.haskell.org/package/nice-html][Hackage]]
+2. [[https://github.com/TransportEngineering/nice-html][GitHub]]
 
 Enjoy!
+
