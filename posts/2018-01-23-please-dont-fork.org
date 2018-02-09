@@ -1,0 +1,19 @@
+---
+title: Status quo ante bellum
+author: Mike Ledger
+published : 23 January, 2018
+---
+
+Hackage has, for years, set apart the Haskell ecosystem from its competitors. In
+recent discussions I think it's clear that people don't appreciate just *how
+good* we've got it in Haskell-land, right now:
+
+1. We have a single centralised repository of *all* Haskell packages that people
+   have been happily using for /years/ now.
+
+2. That centralised repository generates *API* documentation for *all* the
+   packages (at least, the ones that build successfully, and don't run into e.g.
+   a Haddock bug) uploaded.
+
+We should not take either of these for granted. Despite years of contention over
+aspects of Hackage, this is a seriously /good/ state of affairs.
