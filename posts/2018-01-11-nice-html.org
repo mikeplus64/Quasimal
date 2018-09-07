@@ -1,21 +1,19 @@
 ---
-title: nice-html, a fast and fancy HTML generation library
+title: 'nice-html: a fast and fancy HTML generation library'
 author: Mike Ledger
 date: January 11, 2018
 ---
 
 I've been working on and off on a HTML templating library for a few months. It
-was originally intended for use in [[/projects/respecify.html][Respecify]], but that evolved into a
+was originally intended for use in [[https://quasimal.com/projects/respecify.html][Respecify]], but that evolved into a
 single-page application. Thus a library for fast server-side HTML generation
 wasn't necessary any more. (Though you could just as well use ~nice-html~ on a
 frontend through GHCJS.)
 
-The biggest difference is that templates are compiled, so as much HTML is
-"rendered" (i.e., as many strings are concatenated as possible ☺) ahead-of-time
-as possible. This isn't an extremely clever optimisation, but it can make a
-pretty big difference in render times. It also uses ~Text~ internally, though
-this might change, because presumably encoding ~Text~ to UTF-8 ready to be sent
-over a network isn't free.
+The biggest difference to [[http://jaspervdj.be/blaze][BlazeHtml]] and [[https://chrisdone.github.io/lucid/][Lucid]] and is that templates are
+compiled, so as much HTML is "rendered" (i.e., as many strings are concatenated
+as possible ☺) ahead-of-time as possible. This isn't an extremely clever
+optimisation, but it can make a pretty big difference in render times.
 
 To make it possible to still "inject" data into a template, a type parameter is
 given to the markup (compiled ~FastMarkup~ and non-compiled ~Markup~) that gives
@@ -288,6 +286,8 @@ Benchmark mem: FINISH
 * Quick links
 1. [[https://hackage.haskell.org/package/nice-html][Hackage]]
 2. [[https://github.com/TransportEngineering/nice-html][GitHub]]
+3. [[https://hackage.haskell.org/package/type-of-html][type-of-html]] is another fairly recent library that "compiles" HTML (and is a
+   Haskell EDSL), but it does so at the type-level.
 
 Enjoy!
 
