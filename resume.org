@@ -13,7 +13,7 @@ description: My resume
 |          | *Mike Ledger*     |
 | Email    | [[mailto:mike@quasimal.com][mike@quasimal.com]] |
 | Website  | [[http://quasimal.com][quasimal.com]]      |
-| Phone    | [[tel:+61403154462][+61 403 154 462]]   |
+| Phone    | +61 403 154 462   |
 | Accounts | [[https://github.com/mikeplus64][GitHub]], [[http://hackage.haskell.org/user/MikeLedger][Hackage]]   |
 |----------+-------------------|
 
@@ -26,46 +26,59 @@ description: My resume
 <div id="content">
 #+END_HTML
 
-I'm a programmer (and [[http:/gallery][occasional artist]]) living in Sydney, Australia. I'm 3
-years into a [[http://programsandcourses.anu.edu.au/program/AACOM][BAC]]. Currently I'm developing [[https://respecify.com][Respecify]] at [[http://transportengineering.com.au][Transport Engineering]].
+I'm a programmer (and [[http:/gallery][occasional artist]]) living in Canberra, Australia. I'm
+currently working part-time at Ricardo Rail while studying at the ANU here in
+Canberra.
 
 #+BEGIN_HTML 
 <div id="skills">
 #+END_HTML
 
-|--------------+--------+-----------+---------------|
-| Haskell      | SQL    | C         | Linux admin   |
-| Python       | Java   | C#        | HTML/CSS      |
-| JavaScript   | Git    | Mercurial | OpenGL / GLSL |
-| Visual Basic | Design | RDF       | ... and more  |
-|--------------+--------+-----------+---------------|
+|------------+--------+---------------+--------------|
+| Haskell    | Rust   | TypeScript    | Python       |
+| Nix        | Design | Java          | HTML/CSS     |
+| JavaScript | Git    | Data scraping | SQL          |
+| NLP        | React  | RDF           | ... and more |
+|------------+--------+---------------+--------------|
 
-I have experience with parser generators and parsing natural language through my
-work on [[https://respecify.com][Respecify]] -- I've designed and implemented a parser generator
-specifically for it, which enables fast parsing of requirements, and extraction
-of relationships.
 
-I have a great deal of experience with developing web servers/backends, where my
-experience is in using [[http://yesodweb.com][Yesod]], [[http://snapframework.com][Snap]] and [[http://flask.pocoo.org/][Flask]] (where I also gained experience
-with the wonderful [[http://www.sqlalchemy.org/][SQLAlchemy]]). Through Respecify I have experience with
-WebSocket-based single-page applications. I'm proficient with PostgreSQL
-databases where I have experience benchmarking for efficient and minimal
-queries.
-
-I have some experience with writing (and Respecify'ing :-)) technical
-requirements through work on Parramatta Light Rail.
-
-#+BEGIN_HTML 
+#+BEGIN_HTML
 </div>
 #+END_HTML
 
-** Public work
+** Experience
 
 [[https://respecify.com][Respecify]], a requirements authoring tool utilising constrained natural language.
 I have developed this (so far) as a one-man team. Respecify was presented in
 Lisbon for [[http://re2017.org][RE'17]]. [[http://ieeexplore.ieee.org/document/8049164/][Paper available online at IEEE Xplore]].
 
-[[http://transportengineering.com.au][Transport Engineering website]], a simple-ish Hakyll-generated website that runs
+Respecify involves a novel parser generator for creating English grammars, which
+features a simple functional language which individual parsers within a grammar
+produce (as stack-based virtual machine code) as results. The accompanying
+interpreter then "runs" the parse results which enables simple grammars to be
+able to reliably extract information (such as component hierarchies) from
+natural language text.
+
+[[https://kuachicups.com][Kuachi Cups]], a community tournament website. Features fair double
+elimination brackets, single elimination brackets, and group / round robin
+brackets. Uses Discord as the basis for logins as that is what the community
+itself is based around. Also features a dynamic overlay creator for streamers to
+use when streaming tournament games, featuring a WebRTC based remote-control for
+the streamer to control their overlay through e.g. a OBS Studio panel.
+
+[[https://rpd.transport.engineering][RPD Stabling Database]], an online database UI for aiding management of train
+stabling in the Sydney trains network. Allows for a user to query the current
+allocation of train stabling across the network using an interactive map in
+addition to with a powerful query engine. This is a Haskell/Servant server using
+PostgreSQL to serve a TypeScript/React frontend.
+
+[[https://github.com/mikeplus64/solid-typefu-router5][solid-typefu-router5]] a TypeScript/SolidJS library for type-safe routing, similar
+to ~react-router~ but for use with SolidJS. Uniquely it has type-safe ~Link~ and
+~Router~ components whose types are determined by what the library user has
+specified as their routes; uses a lot of new TypeScript magic to enable e.g.
+parsing route definitions at the type-level.
+
+[[https://transportengineering.gitlab.io/com-au][Transport Engineering website]], a simple-ish Hakyll-generated website that runs
 in parallel with an older Wordpress-based website.
 
 [[https://github.com/mikeplus64/teamsplat][teamsplat]], a simple team splitter to generate fair teams for 8-ish player games.
@@ -78,8 +91,8 @@ Respecify.
 compilation and rendering phases, which is its main advantage over e.g., Lucid
 or Blaze.
 
-[[https://github.com/mikeplus64/aeson-flowtyped][aeson-flowtyped]], a Haskell library for generating Flowtype type declarations to
-match ~aeson~'s ~ToJSON~ / ~FromJSON~ instances.
+[[https://github.com/mikeplus64/aeson-flowtyped][aeson-flowtyped]], a Haskell library for generating FlowType or TypeScript type
+declarations to match ~aeson~'s ~ToJSON~ / ~FromJSON~ instances.
 
 [[https://gitlab.com/transportengineering/csvmaps][csvmaps]], a tool for manipulating map-like .csv files.
 
@@ -89,11 +102,8 @@ match ~aeson~'s ~ToJSON~ / ~FromJSON~ instances.
 [[http://quasimal.com/projects/level_0.html][Level-0]], a clone of the [[https://en.wikipedia.org/wiki/Nokia_1100][Nokia 1100]]'s *Snake II* using the SDL bindings for
 Haskell.
 
-[[http://hackage.haskell.com/package/indices][indices]], a library providing statically bounded array indices, extensively
-making use of GHC features to have extremely little runtime overhead.
-
-[[https://github.com/mikeplus64/static][static]], a new array library for statically bounded arrays, unrolling operations
-at compile-time where possible.
+[[http://hackage.haskell.com/package/indices][indices]], a library providing statically bounded array indices, enable static
+unrolling of critical loops performing array operations.
 
 [[http://hackage.haskell.org/package/QuasiText][QuasiText]], a simple ~QuasiQuoter~ for interpolating Haskell values into ~Text~
 strings.
@@ -102,8 +112,9 @@ strings.
  DGGS/Linked data → SPARQL/REST endpoint, in order to inform future W3C and OGC
  standards [[https://www.w3.org/2015/spatial/charter][future W3C and OGC standards]]. Makes use of variable-resolution
  satellite imagery made available in the [[http://www.datacube.org.au/][Australian Geoscience Datacube]]. My
- involvement was limited -- I left uni for full-time work because I could
- no-longer afford it.
+ involvement was limited -- I participated only in the first half of this
+ project in order to pursue full-time work because I could no-longer afford uni
+ at the time.
 
 ** Open source contributions
 

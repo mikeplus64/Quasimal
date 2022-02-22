@@ -1,201 +1,208 @@
 #header {
-    padding: 15px;
-    background: linear-gradient(#536f6f,#297158);
-    background-color: #182820;
-    border-radius: 5px 5px 0px 0px;
-    border-top: 1px solid #AAA;
-    color: white;
+  padding: 15px;
+  background: linear-gradient(#536f6f, #297158);
+  background-color: #182820;
+  border-radius: 5px 5px 0px 0px;
+  border-top: 1px solid #aaa;
+  color: white;
 }
 
 #header h1 {
-    text-shadow: 0px 1px 2px black;
-    font-weight: 300;
+  text-shadow: 0px 1px 2px black;
+  font-weight: 300;
 }
 
 #content {
-    padding: 10px;
+  padding: 10px;
 }
 
 a {
-    color: #256;
-    font-weight: normal;
-    outline: 0 !important;
+  color: #256;
+  font-weight: normal;
+  outline: 0 !important;
 }
-a:visited { color: #256 }
+a:visited {
+  color: #256;
+}
 
 .btn {
-    text-decoration: none;
-    background-color: #eee;
-    padding: 5px 14px;
-    font-size: 8pt;
-    text-shadow: 0px 1px white;
-    color: #152721;
-    box-shadow: 0px 2px 2px black;
-    border-bottom: 2px solid grey;
-    border-radius: 2px;
-    display: inline-block;
-    background: linear-gradient(#fff, #ddd) !important;
-    background-color: #ddd;
-    border-bottom: 2px solid white;
+  text-decoration: none;
+  background-color: #eee;
+  padding: 5px 14px;
+  font-size: 8pt;
+  text-shadow: 0px 1px white;
+  color: #152721;
+  box-shadow: 0px 2px 2px black;
+  border-bottom: 2px solid grey;
+  border-radius: 2px;
+  display: inline-block;
+  background: linear-gradient(#fff, #ddd) !important;
+  background-color: #ddd;
+  border-bottom: 2px solid white;
 }
 
 .btn:visited {
-    color: #152721;
-    text-decoration: none;
+  color: #152721;
+  text-decoration: none;
 }
 
 .btn:hover {
-    background: linear-gradient(#fafafa, #ccc);
-    background-color: #ccc;
-    text-decoration: none;
+  background: linear-gradient(#fafafa, #ccc);
+  background-color: #ccc;
+  text-decoration: none;
 }
 
 .btn:active {
-    color: black;
-    background: linear-gradient(#eee, #bbb);
-    background-color: #bbb;
-    text-decoration: none;
-    position: relative;
-    top: 1px;
+  color: black;
+  background: linear-gradient(#eee, #bbb);
+  background-color: #bbb;
+  text-decoration: none;
+  position: relative;
+  top: 1px;
 }
 
 .float-right {
-    float: right;
+  float: right;
 }
 
 body {
-    background: #344; /* #233A32); */
-    background-color: #222223;
-    font-family: "Helvetica", sans-serif;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow-y: scroll;
+  background: #344; /* #233A32); */
+  background-color: #222223;
+  font-family: "Helvetica", sans-serif;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-y: scroll;
 }
 
-@media(max-width: 860px) {
-    .main, .main-w {
-        box-shadow: none !important;
-        background-color: white;
-        width: 100% !important;
-        margin: 0 !important;
-    }
+@media (max-width: 860px) {
+  .main,
+  .main-w {
+    box-shadow: none !important;
+    background-color: white;
+    width: 100% !important;
+    margin: 0 !important;
+  }
 
-    #header {
-        margin: 0 !important;
-        box-shadow: none !important;
-        border-radius: 0 !important;
-        border: none !important;
-        padding: none !important;
-    }
+  #header {
+    margin: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    border: none !important;
+    padding: none !important;
+  }
 
-    body {
-        background-color: #fff;
-        margin: 0 !important;
-    }
+  body {
+    background-color: #fff;
+    margin: 0 !important;
+  }
 }
 
 a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
-a:active, a:hover {
-    text-decoration: underline;
+a:active,
+a:hover {
+  text-decoration: underline;
 }
 
 .main {
-    border-radius: 7px 7px 3px 3px;
-    background-color: white;
-    max-width: 860px; /* should fit exactly 6 thumbnails */
-    margin: 1em auto 1em auto;
-    word-wrap: break-word;
-    box-shadow: 0px 0px 12px black;
+  border-radius: 7px 7px 3px 3px;
+  background-color: white;
+  max-width: 860px; /* should fit exactly 6 thumbnails */
+  margin: 1em auto 1em auto;
+  word-wrap: break-word;
+  box-shadow: 0px 0px 12px black;
 }
 
 .main-w {
-    margin: 1em auto 1em auto;
-    max-width: 860px; /* should fit exactly 6 thumbnails */
+  margin: 1em auto 1em auto;
+  max-width: 860px; /* should fit exactly 6 thumbnails */
 }
 
 img {
-    max-width: 100%;
+  max-width: 100%;
 }
 
 #gallery {
-    max-width: 100%;
-    height: 100%;
-    text-align: center;
+  max-width: 100%;
+  height: 100%;
+  text-align: center;
 }
 
 .thumb {
-    margin: 0.8em;
-    overflow: hidden;
-    text-decoration: none;
-    position: relative;
-    width: 128px;
-    height: 128px;
-    display: inline-block;
-    border-radius: 3px;
-    font-family: monospace;
-    word-break: break-all;
-    font-size: small;
-    text-align: center;
-    color: white;
-    box-shadow: 0px 2px 7px rgba(0,0,0,0.2);
-    transition: box-shadow 200ms;
+  margin: 0.8em;
+  overflow: hidden;
+  text-decoration: none;
+  position: relative;
+  width: 128px;
+  height: 128px;
+  display: inline-block;
+  border-radius: 3px;
+  font-family: monospace;
+  word-break: break-all;
+  font-size: small;
+  text-align: center;
+  color: white;
+  box-shadow: 0px 2px 7px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 200ms;
 }
 
 .thumb:hover {
-    box-shadow: 0px 2px 7px 2px rgba(0,0,0,0.4)
-              , 0px 1px 14px rgba(255,255,255,0.2);
+  box-shadow: 0px 2px 7px 2px rgba(0, 0, 0, 0.4),
+    0px 1px 14px rgba(255, 255, 255, 0.2);
 }
 
 .thumb:active {
-    box-shadow: 0px 1px 7px 1px rgba(0,0,0,0.5)
-              , 0px 1px 14px 1px rgba(255,255,255,0.3);
+  box-shadow: 0px 1px 7px 1px rgba(0, 0, 0, 0.5),
+    0px 1px 14px 1px rgba(255, 255, 255, 0.3);
 }
 
 #image img {
-    display: block;
-    margin: auto;
-    max-width: 100%;
+  display: block;
+  margin: auto;
+  max-width: 100%;
+  max-height: calc(100vh - 160px);
+  object-fit: contain;
 }
 
 .thumb:visited {
-    color: white;
+  color: white;
 }
 
 .thumbimg {
-    border-radius: 3px;
+  border-radius: 3px;
 }
 
 .thumb .caption {
-    position: absolute;
-    bottom: 0; left: 0;
-    background-color: black;
-    border-bottom-left-radius: 3px;
-    padding-left: 2px;
-    padding-right: 2px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: black;
+  border-bottom-left-radius: 3px;
+  padding-left: 2px;
+  padding-right: 2px;
 }
 
 /* Syntax highlighting */
 /* I wish I remembered where I got this */
 
 .info {
-    font-style: italic;
-    font-size: smaller;
-    float: right;
-    line-height: 10px;
+  font-style: italic;
+  font-size: smaller;
+  float: right;
+  line-height: 10px;
 }
 
 .nav a {
-    color: white;
-    font-family: monospace;
-    margin-right: 1em;
-    text-shadow: 0 1px 0 black;
+  color: white;
+  font-family: monospace;
+  margin-right: 1em;
+  text-shadow: 0 1px 0 black;
 }
 
 #disqus_thread {
-    max-width: 800px !important;
-    overflow: hidden;
-    margin: 0 auto;
+  max-width: 800px !important;
+  overflow: hidden;
+  margin: 0 auto;
 }

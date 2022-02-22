@@ -1,0 +1,57 @@
+---
+title: 'shrinkmusic: Shrink your music for your phone, car stereo, etc.'
+author: Mike Ledger
+date: September 12, 2018
+---
+
+I love music. I have a rather large digital collection of it, hoarded over many
+years, and I intend to grow it indefinitely. There are a wide variety of
+formats, from FLAC, to Ogg Theora, to MP3, to (very poor) WMA.
+
+Converting all the music at once, preserving the exact directory structure, is
+more of a challenge than it ought to be -- ideally, a command should exist, like
+~rsync~, that intelligently decides what to convert and what to just copy
+(converting 96kbps mp3 files to a different lossy format will not do it many
+favours).
+
+That's what [[https://github.com/mikeplus64/shrinkmusic][shrinkmusic]] is. It takes an input directory, an output directory,
+computes a plan -- what to convert, what to keep, what to skip due to already
+existing in the output directory, and what to ignore due to a user flag -- and
+then executes it, in parallel, using as many jobs as you'd like.
+
+* Features
+- Add new music without re-converting an entire library
+- Decides (albeit by pretty dumb heuristics) what is worth converting, and what
+  is OK to just copy
+- Splits ~FILE.flac~ and ~FILE.cue~ pairs automatically
+- Parallel execution
+- Dry run mode
+- Can ignore specific files/directories (e.g., I don't care to copy hoarded
+  podcasts -- readily available on the internet anyway -- over)
+
+* Install
+Install using [[https://www.stackage.org/][Stack]] or [[https://nixos.org/][Nix]].
+
+#+BEGIN_SRC sh
+$ git pull https://github.com/mikeplus64/shrinkmusic.git
+$ cd shrinkmusic
+$ stack install
+$ nix-env -f ./default.nix -i # alternative for Nix
+#+END_SRC
+
+* Usage
+
+#+BEGIN_SRC
+Usage: shrinkmusic (-i|--input INPUT) (-o|--output OUTPUT)
+                   (-b|--bitrate BITRATE) (-j|--jobs JOBS) [-z|--ignore IGNORE]
+                   [-d|--dry-run]
+
+Available options:
+  -h,--help                Show this help text
+  -i,--input INPUT         Input directory
+  -o,--output OUTPUT       Output directory
+  -b,--bitrate BITRATE     bitrate for audio
+  -j,--jobs JOBS           Number of jobs to use
+  -z,--ignore IGNORE       Ignore this file
+  -d,--dry-run             Do nothing; just output the plan
+#+END_SRC
