@@ -46,7 +46,7 @@ Canberra.
 </div>
 #+END_HTML
 
-** Experience
+** Projects, past and present
 
 [[https://respecify.com][Respecify]], a requirements authoring tool utilising constrained natural language.
 I have developed this (so far) as a one-man team. Respecify was presented in
@@ -108,13 +108,12 @@ unrolling of critical loops performing array operations.
 [[http://hackage.haskell.org/package/QuasiText][QuasiText]], a simple ~QuasiQuoter~ for interpolating Haskell values into ~Text~
 strings.
 
-[[https://github.com/ANU-Linked-Earth-Data][Linked Earth Data]], an explorative team project to deliver a highly interoperable
- DGGS/Linked data → SPARQL/REST endpoint, in order to inform future W3C and OGC
- standards [[https://www.w3.org/2015/spatial/charter][future W3C and OGC standards]]. Makes use of variable-resolution
- satellite imagery made available in the [[http://www.datacube.org.au/][Australian Geoscience Datacube]]. My
- involvement was limited -- I participated only in the first half of this
- project in order to pursue full-time work because I could no-longer afford uni
- at the time.
+[[https://github.com/ANU-Linked-Earth-Data][Linked Earth Data]], an explorative team project done under ANU's TechLauncher
+ program, to deliver a highly interoperable DGGS/Linked data → SPARQL/REST
+ endpoint, in order to inform [[https://www.w3.org/2015/spatial/charter][future W3C and OGC standards]]. Makes use of
+ variable-resolution satellite imagery made available in the [[http://www.datacube.org.au/][Australian
+ Geoscience Datacube]]. My involvement was limited -- I participated only in the
+ first half of this project.
 
 ** Open source contributions
 
